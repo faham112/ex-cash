@@ -345,36 +345,7 @@ export default function Dashboard() {
               </Card>
             </div>
 
-            {/* Quick Actions */}
-            <Card className="mb-6">
-              <CardHeader>
-                <CardTitle>Quick Actions</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <Dialog open={isDepositDialogOpen} onOpenChange={setIsDepositDialogOpen}>
-                    <DialogTrigger asChild>
-                      <Button className="h-16 flex flex-col bg-green-600 hover:bg-green-700">
-                        <Plus className="h-5 w-5 mb-1" />
-                        <span className="text-sm">Deposit</span>
-                      </Button>
-                    </DialogTrigger>
-                  </Dialog>
-                  <Button variant="outline" className="h-16 flex flex-col">
-                    <TrendingUp className="h-5 w-5 mb-1" />
-                    <span className="text-sm">Invest</span>
-                  </Button>
-                  <Button variant="outline" className="h-16 flex flex-col">
-                    <CreditCard className="h-5 w-5 mb-1" />
-                    <span className="text-sm">Withdraw</span>
-                  </Button>
-                  <Button variant="outline" className="h-16 flex flex-col">
-                    <Settings className="h-5 w-5 mb-1" />
-                    <span className="text-sm">Settings</span>
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+            
 
             {/* Recent Activity */}
             <Card>
