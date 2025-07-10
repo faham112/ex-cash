@@ -35,8 +35,14 @@ export default function Header() {
     <header className="sticky top-0 z-50 bg-white border-b border-slate-200 py-4 shadow-sm dark:bg-muted dark:border-border dark:shadow-none">
       <div className="container mx-auto px-4 flex justify-between items-center">
         <div className="flex items-center">
-          <Link href="/" className="text-2xl font-bold">
-            <span className="text-black dark:text-white">Invest</span><span className="text-[#fac219]">RO</span>
+          <Link href="/" className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+              <span className="text-white font-bold text-lg">I</span>
+            </div>
+            <span className="text-2xl font-bold">
+              <span className="text-black dark:text-white">Invest</span>
+              <span className="text-blue-600">RO</span>
+            </span>
           </Link>
         </div>
         
@@ -94,6 +100,9 @@ export default function Header() {
             <SheetContent side="right" className="w-80">
               <SheetHeader>
                 <SheetTitle className="flex items-center gap-2 text-left">
+                  <div className="w-6 h-6 bg-gradient-to-r from-blue-600 to-purple-600 rounded-md flex items-center justify-center">
+                    <span className="text-white font-bold text-sm">I</span>
+                  </div>
                   <span className="text-black dark:text-white">Invest</span><span className="text-blue-600">RO</span>
                   <span className="text-sm text-muted-foreground ml-2">Menu</span>
                 </SheetTitle>

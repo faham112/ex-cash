@@ -60,7 +60,15 @@ export default function Dashboard() {
       {/* Header with Hello World */}
       <div className="bg-white shadow-sm border-b">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <h1 className="text-xl text-orange-600 font-bold">InvestRO</h1>
+          <div className="flex items-center gap-2">
+            <div className="w-6 h-6 bg-gradient-to-r from-blue-600 to-purple-600 rounded-md flex items-center justify-center">
+              <span className="text-white font-bold text-sm">I</span>
+            </div>
+            <span className="text-xl font-bold">
+              <span className="text-black dark:text-white">Invest</span>
+              <span className="text-blue-600">RO</span>
+            </span>
+          </div>
           
 
           
