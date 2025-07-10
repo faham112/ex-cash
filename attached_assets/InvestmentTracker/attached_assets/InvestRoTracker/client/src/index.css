@@ -1,0 +1,97 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 222 47% 11%;
+  --foreground: 0 0% 98%;
+  --muted: 223 47% 14%;
+  --muted-foreground: 215 16% 65%;
+  --popover: 222 47% 11%;
+  --popover-foreground: 0 0% 98%;
+  --card: 222 47% 11%;
+  --card-foreground: 0 0% 98%;
+  --border: 223 47% 18%;
+  --input: 223 47% 18%;
+  --primary: 45 96% 54%;
+  --primary-foreground: 222 47% 11%;
+  --secondary: 223 47% 18%;
+  --secondary-foreground: 0 0% 98%;
+  --accent: 223 47% 18%;
+  --accent-foreground: 0 0% 98%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 0 0% 98%;
+  --ring: 223 47% 18%;
+  --radius: 0.5rem;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold;
+  }
+}
+
+/* Custom classes */
+.gradient-bg {
+  background-image: radial-gradient(circle at 10% 20%, rgba(26, 34, 53, 1) 0%, rgba(18, 25, 39, 1) 90%);
+}
+
+.gradient-bg-alt {
+  background-image: radial-gradient(circle at 90% 90%, rgba(26, 34, 53, 0.8) 0%, rgba(18, 25, 39, 0.8) 90%);
+}
+
+.hover-card:hover {
+  @apply transform -translate-y-1 shadow-lg transition duration-300;
+}
+
+.hover-card:hover .card-icon {
+  @apply text-primary transition-colors duration-300;
+}
+
+.feature-icon-container {
+  @apply w-14 h-14 rounded-full flex items-center justify-center mb-6 bg-muted;
+}
+
+.stat-card {
+  @apply bg-muted bg-opacity-50 rounded-2xl shadow-xl p-8 border border-muted;
+}
+
+.feature-card {
+  @apply bg-card rounded-xl p-6 border border-border hover:border-primary transition-colors;
+}
+
+.plan-card {
+  @apply bg-card rounded-xl overflow-hidden border border-border hover:border-primary transition-all transform hover:-translate-y-1 hover:shadow-xl;
+}
+
+.step-card {
+  @apply bg-card rounded-xl p-6 border border-border relative;
+}
+
+.calculator-card {
+  @apply bg-card border border-border rounded-xl p-6;
+}
+
+.step-number {
+  @apply absolute -top-5 -left-5 w-10 h-10 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-xl font-bold;
+}
+
+.step-icon-container {
+  @apply w-16 h-16 mx-auto bg-muted rounded-full flex items-center justify-center mb-4;
+}
+
+.section-title {
+  @apply text-3xl md:text-4xl font-bold mb-4;
+}
+
+.section-subtitle {
+  @apply text-muted-foreground max-w-2xl mx-auto;
+}
