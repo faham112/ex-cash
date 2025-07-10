@@ -62,11 +62,7 @@ export default function Dashboard() {
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <h1 className="text-xl text-orange-600 font-bold">InvestRO</h1>
           
-          {/* Hello World Section */}
-          <div className="text-center flex-1 mx-8">
-            <h1 className="text-4xl font-bold text-orange-600">Hello World</h1>
-            <p className="text-gray-600 mt-1">Welcome to your investment dashboard</p>
-          </div>
+
           
           <div className="flex items-center gap-2">
             {/* Theme Toggle Button */}
