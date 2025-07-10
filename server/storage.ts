@@ -5,6 +5,8 @@ import {
   type InsertPlan, 
   type Investment, 
   type InsertInvestment, 
+  type Newsletter,
+  type InsertNewsletter,
   type PlatformStats,
   type ReturnCalculation
 } from "@shared/schema";
@@ -40,6 +42,11 @@ export interface IStorage {
   // Statistics
   getStats(): Promise<PlatformStats>;
   getUserStats(userId: string): Promise<any>;
+  
+  // Newsletter operations
+  subscribeToNewsletter(email: string): Promise<Newsletter>;
+  unsubscribeFromNewsletter(email: string): Promise<void>;
+  getNewsletterSubscriptions(): Promise<Newsletter[]>;
 }
 
 export class SupabaseStorage implements IStorage {
@@ -382,6 +389,52 @@ export class SupabaseStorage implements IStorage {
       totalEarnings,
       totalReferrals
     };
+  }
+
+  // Newsletter operations
+  async subscribeToNewsletter(email: string): Promise<Newsletter> {
+    const { data, error } = await supabase
+      .from('newsletters')
+      .insert([{ email }])
+      .select()
+      .single();
+    
+    if (error) {
+      console.error('Error subscribing to newsletter:', error);
+      throw new Error('Failed to subscribe to newsletter');
+    }
+    
+    return data as Newsletter;
+  }
+
+  async unsubscribeFromNewsletter(email: string): Promise<void> {
+    const { error } = await supabase
+      .from('newsletters')
+      .update({ 
+        status: 'unsubscribed',
+        unsubscribed_at: new Date().toISOString()
+      })
+      .eq('email', email);
+    
+    if (error) {
+      console.error('Error unsubscribing from newsletter:', error);
+      throw new Error('Failed to unsubscribe from newsletter');
+    }
+  }
+
+  async getNewsletterSubscriptions(): Promise<Newsletter[]> {
+    const { data, error } = await supabase
+      .from('newsletters')
+      .select('*')
+      .eq('status', 'active')
+      .order('subscribed_at', { ascending: false });
+    
+    if (error) {
+      console.error('Error fetching newsletter subscriptions:', error);
+      return [];
+    }
+    
+    return data as Newsletter[];
   }
 }
 

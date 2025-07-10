@@ -123,6 +123,19 @@ export const insertReferralSchema = createInsertSchema(referrals).pick({
   commission_rate: true
 });
 
+// Newsletter subscriptions
+export const newsletters = pgTable("newsletters", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  email: text("email").notNull().unique(),
+  status: text("status").notNull().default("active"),
+  subscribed_at: timestamp("subscribed_at").defaultNow(),
+  unsubscribed_at: timestamp("unsubscribed_at")
+});
+
+export const insertNewsletterSchema = createInsertSchema(newsletters).pick({
+  email: true
+});
+
 // Types
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
@@ -138,6 +151,9 @@ export type Transaction = typeof transactions.$inferSelect;
 
 export type InsertReferral = z.infer<typeof insertReferralSchema>;
 export type Referral = typeof referrals.$inferSelect;
+
+export type InsertNewsletter = z.infer<typeof insertNewsletterSchema>;
+export type Newsletter = typeof newsletters.$inferSelect;
 
 // Statistics
 export interface PlatformStats {
