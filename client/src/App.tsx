@@ -12,6 +12,8 @@ import Register from "./pages/register";
 import NotFound from "./pages/not-found";
 
 const Dashboard = lazy(() => import("./pages/dashboard"));
+const AdminLogin = lazy(() => import("./pages/admin/login"));
+const AdminDashboard = lazy(() => import("./pages/admin/dashboard"));
 
 function Router() {
   return (
@@ -21,7 +23,8 @@ function Router() {
         <Route path="/login" component={Login} />
         <Route path="/register" component={Register} />
         <Route path="/dashboard" component={Dashboard} />
-        <Route path="/admin/dashboard" component={lazy(() => import("./pages/admin/dashboard"))} />
+        <Route path="/admin/login" component={AdminLogin} />
+        <Route path="/admin/dashboard" component={AdminDashboard} />
         <Route component={NotFound} />
       </Switch>
     </Suspense>
