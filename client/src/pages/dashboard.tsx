@@ -121,9 +121,9 @@ export default function Dashboard() {
       case 'activity':
         return (
           <div className="space-y-4">
-            <Card>
+            <Card className="bg-gray-800/50 backdrop-blur-sm border-gray-700">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2 text-white">
                   <History className="h-5 w-5" />
                   Recent Transactions
                 </CardTitle>
@@ -131,13 +131,13 @@ export default function Dashboard() {
               <CardContent>
                 <div className="space-y-3">
                   {recentTransactions.map((transaction) => (
-                    <div key={transaction.id} className="flex items-center justify-between p-3 border rounded-lg">
+                    <div key={transaction.id} className="flex items-center justify-between p-3 border border-gray-700 rounded-lg bg-gray-800/30">
                       <div className="flex items-center gap-3">
                         <div className={`p-2 rounded-full ${
-                          transaction.type === 'deposit' ? 'bg-green-100 text-green-600' :
-                          transaction.type === 'investment' ? 'bg-blue-100 text-blue-600' :
-                          transaction.type === 'profit' ? 'bg-purple-100 text-purple-600' :
-                          'bg-orange-100 text-orange-600'
+                          transaction.type === 'deposit' ? 'bg-green-900/50 text-green-400' :
+                          transaction.type === 'investment' ? 'bg-blue-900/50 text-blue-400' :
+                          transaction.type === 'profit' ? 'bg-purple-900/50 text-purple-400' :
+                          'bg-orange-900/50 text-orange-400'
                         }`}>
                           {transaction.type === 'deposit' && <Plus className="h-4 w-4" />}
                           {transaction.type === 'investment' && <TrendingUp className="h-4 w-4" />}
@@ -145,16 +145,16 @@ export default function Dashboard() {
                           {transaction.type === 'withdrawal' && <CreditCard className="h-4 w-4" />}
                         </div>
                         <div>
-                          <p className="font-medium capitalize">{transaction.type}</p>
-                          <p className="text-sm text-muted-foreground">{transaction.date}</p>
+                          <p className="font-medium capitalize text-white">{transaction.type}</p>
+                          <p className="text-sm text-gray-400">{transaction.date}</p>
                         </div>
                       </div>
                       <div className="text-right">
-                        <p className={`font-semibold ${transaction.amount > 0 ? 'text-green-600' : 'text-red-600'}`}>
+                        <p className={`font-semibold ${transaction.amount > 0 ? 'text-green-400' : 'text-red-400'}`}>
                           {transaction.amount > 0 ? '+' : ''}PKR {Math.abs(transaction.amount).toLocaleString()}
                         </p>
                         <p className={`text-xs ${
-                          transaction.status === 'completed' ? 'text-green-600' : 'text-orange-600'
+                          transaction.status === 'completed' ? 'text-green-400' : 'text-orange-400'
                         }`}>
                           {transaction.status}
                         </p>
@@ -170,34 +170,34 @@ export default function Dashboard() {
       case 'wallet':
         return (
           <div className="space-y-4">
-            <Card>
+            <Card className="bg-gray-800/50 backdrop-blur-sm border-gray-700">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2 text-white">
                   <Wallet className="h-5 w-5" />
                   Wallet Overview
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="p-4 border rounded-lg">
-                    <h3 className="font-semibold text-gray-600">Available Balance</h3>
-                    <p className="text-2xl font-bold text-green-600">PKR {userStats.balance.toLocaleString()}</p>
+                  <div className="p-4 border border-gray-700 rounded-lg bg-gray-800/30">
+                    <h3 className="font-semibold text-gray-300">Available Balance</h3>
+                    <p className="text-2xl font-bold text-green-400">PKR {userStats.balance.toLocaleString()}</p>
                   </div>
-                  <div className="p-4 border rounded-lg">
-                    <h3 className="font-semibold text-gray-600">Total Invested</h3>
-                    <p className="text-2xl font-bold text-blue-600">PKR 15,000</p>
+                  <div className="p-4 border border-gray-700 rounded-lg bg-gray-800/30">
+                    <h3 className="font-semibold text-gray-300">Total Invested</h3>
+                    <p className="text-2xl font-bold text-blue-400">PKR 15,000</p>
                   </div>
                 </div>
                 <div className="mt-4 flex gap-2">
                   <Dialog open={isDepositDialogOpen} onOpenChange={setIsDepositDialogOpen}>
                     <DialogTrigger asChild>
-                      <Button className="flex-1">
+                      <Button className="flex-1 bg-blue-600 hover:bg-blue-700">
                         <Plus className="h-4 w-4 mr-2" />
                         Deposit Money
                       </Button>
                     </DialogTrigger>
                   </Dialog>
-                  <Button variant="outline" className="flex-1">
+                  <Button variant="outline" className="flex-1 border-gray-600 text-white hover:bg-gray-700">
                     <CreditCard className="h-4 w-4 mr-2" />
                     Withdraw
                   </Button>
@@ -210,9 +210,9 @@ export default function Dashboard() {
       case 'profile':
         return (
           <div className="space-y-4">
-            <Card>
+            <Card className="bg-gray-800/50 backdrop-blur-sm border-gray-700">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2 text-white">
                   <User className="h-5 w-5" />
                   Profile Information
                 </CardTitle>
@@ -220,18 +220,18 @@ export default function Dashboard() {
               <CardContent>
                 <div className="space-y-4">
                   <div>
-                    <Label>Email</Label>
-                    <Input value={user.email} disabled />
+                    <Label className="text-gray-300">Email</Label>
+                    <Input value={user.email} disabled className="bg-gray-700/50 border-gray-600 text-white" />
                   </div>
                   <div>
-                    <Label>Account Status</Label>
+                    <Label className="text-gray-300">Account Status</Label>
                     <div className="flex items-center gap-2 mt-1">
-                      <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-sm">Verified</span>
+                      <span className="px-2 py-1 bg-green-900/50 text-green-400 rounded-full text-sm">Verified</span>
                     </div>
                   </div>
                   <div>
-                    <Label>Member Since</Label>
-                    <p className="text-sm text-muted-foreground mt-1">January 2024</p>
+                    <Label className="text-gray-300">Member Since</Label>
+                    <p className="text-sm text-gray-400 mt-1">January 2024</p>
                   </div>
                 </div>
               </CardContent>
@@ -243,16 +243,17 @@ export default function Dashboard() {
         return (
           <>
             {/* Welcome Header */}
-            <Card className="mb-6">
+            <Card className="mb-6 bg-gray-800/50 backdrop-blur-sm border-gray-700">
               <CardHeader>
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-2xl text-orange-600">
+                  <CardTitle className="text-2xl text-blue-400">
                     Welcome back, {user.email?.split('@')[0]}!
                   </CardTitle>
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={() => setShowBalance(!showBalance)}
+                    className="text-gray-300 hover:text-white hover:bg-gray-700"
                   >
                     {showBalance ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
                   </Button>
@@ -263,84 +264,84 @@ export default function Dashboard() {
             {/* 2x2 Grid System for Investment Stats */}
             <div className="grid grid-cols-2 gap-4 mb-6">
               {/* Total Balance Card */}
-              <Card className="bg-gradient-to-br from-green-50 to-green-100 border-green-200">
+              <Card className="bg-gradient-to-br from-green-900/80 to-green-800/80 border-green-700/50 backdrop-blur-sm">
                 <CardHeader className="pb-2">
                   <div className="flex items-center justify-between">
-                    <CardTitle className="text-sm font-semibold text-green-800 flex items-center gap-1">
+                    <CardTitle className="text-sm font-semibold text-green-300 flex items-center gap-1">
                       <Wallet className="h-4 w-4" />
                       Total Balance
                     </CardTitle>
-                    <div className="p-1 bg-green-200 rounded-full">
-                      <DollarSign className="h-3 w-3 text-green-700" />
+                    <div className="p-1 bg-green-700/50 rounded-full">
+                      <DollarSign className="h-3 w-3 text-green-300" />
                     </div>
                   </div>
                 </CardHeader>
                 <CardContent className="pt-0">
-                  <p className="text-xl font-bold text-green-600 mb-1">
+                  <p className="text-xl font-bold text-green-400 mb-1">
                     {showBalance ? `PKR ${userStats.balance.toLocaleString()}` : 'PKR ****'}
                   </p>
-                  <p className="text-xs text-green-700">Available for investment</p>
+                  <p className="text-xs text-green-300/80">Available for investment</p>
                 </CardContent>
               </Card>
 
               {/* Active Investments Card */}
-              <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
+              <Card className="bg-gradient-to-br from-blue-900/80 to-blue-800/80 border-blue-700/50 backdrop-blur-sm">
                 <CardHeader className="pb-2">
                   <div className="flex items-center justify-between">
-                    <CardTitle className="text-sm font-semibold text-blue-800 flex items-center gap-1">
+                    <CardTitle className="text-sm font-semibold text-blue-300 flex items-center gap-1">
                       <TrendingUp className="h-4 w-4" />
                       Active Investments
                     </CardTitle>
-                    <div className="p-1 bg-blue-200 rounded-full">
-                      <Activity className="h-3 w-3 text-blue-700" />
+                    <div className="p-1 bg-blue-700/50 rounded-full">
+                      <Activity className="h-3 w-3 text-blue-300" />
                     </div>
                   </div>
                 </CardHeader>
                 <CardContent className="pt-0">
-                  <p className="text-xl font-bold text-blue-600 mb-1">{userStats.activeInvestments}</p>
-                  <p className="text-xs text-blue-700">Currently running plans</p>
+                  <p className="text-xl font-bold text-blue-400 mb-1">{userStats.activeInvestments}</p>
+                  <p className="text-xs text-blue-300/80">Currently running plans</p>
                 </CardContent>
               </Card>
 
               {/* Total Earnings Card */}
-              <Card className="bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200">
+              <Card className="bg-gradient-to-br from-purple-900/80 to-purple-800/80 border-purple-700/50 backdrop-blur-sm">
                 <CardHeader className="pb-2">
                   <div className="flex items-center justify-between">
-                    <CardTitle className="text-sm font-semibold text-purple-800 flex items-center gap-1">
+                    <CardTitle className="text-sm font-semibold text-purple-300 flex items-center gap-1">
                       <Plus className="h-4 w-4" />
                       Total Earnings
                     </CardTitle>
-                    <div className="p-1 bg-purple-200 rounded-full">
-                      <DollarSign className="h-3 w-3 text-purple-700" />
+                    <div className="p-1 bg-purple-700/50 rounded-full">
+                      <DollarSign className="h-3 w-3 text-purple-300" />
                     </div>
                   </div>
                 </CardHeader>
                 <CardContent className="pt-0">
-                  <p className="text-xl font-bold text-purple-600 mb-1">
+                  <p className="text-xl font-bold text-purple-400 mb-1">
                     {showBalance ? `PKR ${userStats.totalEarnings.toLocaleString()}` : 'PKR ****'}
                   </p>
-                  <p className="text-xs text-purple-700">Lifetime profits earned</p>
+                  <p className="text-xs text-purple-300/80">Lifetime profits earned</p>
                 </CardContent>
               </Card>
 
               {/* Today's Earnings Card */}
-              <Card className="bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200">
+              <Card className="bg-gradient-to-br from-orange-900/80 to-orange-800/80 border-orange-700/50 backdrop-blur-sm">
                 <CardHeader className="pb-2">
                   <div className="flex items-center justify-between">
-                    <CardTitle className="text-sm font-semibold text-orange-800 flex items-center gap-1">
+                    <CardTitle className="text-sm font-semibold text-orange-300 flex items-center gap-1">
                       <Activity className="h-4 w-4" />
                       Today's Earnings
                     </CardTitle>
-                    <div className="p-1 bg-orange-200 rounded-full">
-                      <TrendingUp className="h-3 w-3 text-orange-700" />
+                    <div className="p-1 bg-orange-700/50 rounded-full">
+                      <TrendingUp className="h-3 w-3 text-orange-300" />
                     </div>
                   </div>
                 </CardHeader>
                 <CardContent className="pt-0">
-                  <p className="text-xl font-bold text-orange-600 mb-1">
+                  <p className="text-xl font-bold text-orange-400 mb-1">
                     {showBalance ? `PKR ${userStats.todayEarnings.toLocaleString()}` : 'PKR ****'}
                   </p>
-                  <p className="text-xs text-orange-700">Earned today</p>
+                  <p className="text-xs text-orange-300/80">Earned today</p>
                 </CardContent>
               </Card>
             </div>
@@ -348,9 +349,9 @@ export default function Dashboard() {
             
 
             {/* Recent Activity */}
-            <Card>
+            <Card className="bg-gray-800/50 backdrop-blur-sm border-gray-700">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2 text-white">
                   <Activity className="h-5 w-5" />
                   Recent Activity
                 </CardTitle>
@@ -358,13 +359,13 @@ export default function Dashboard() {
               <CardContent>
                 <div className="space-y-3">
                   {recentTransactions.slice(0, 3).map((transaction) => (
-                    <div key={transaction.id} className="flex items-center justify-between p-3 border rounded-lg">
+                    <div key={transaction.id} className="flex items-center justify-between p-3 border border-gray-700 rounded-lg bg-gray-800/30">
                       <div className="flex items-center gap-3">
                         <div className={`p-2 rounded-full ${
-                          transaction.type === 'deposit' ? 'bg-green-100 text-green-600' :
-                          transaction.type === 'investment' ? 'bg-blue-100 text-blue-600' :
-                          transaction.type === 'profit' ? 'bg-purple-100 text-purple-600' :
-                          'bg-orange-100 text-orange-600'
+                          transaction.type === 'deposit' ? 'bg-green-900/50 text-green-400' :
+                          transaction.type === 'investment' ? 'bg-blue-900/50 text-blue-400' :
+                          transaction.type === 'profit' ? 'bg-purple-900/50 text-purple-400' :
+                          'bg-orange-900/50 text-orange-400'
                         }`}>
                           {transaction.type === 'deposit' && <Plus className="h-4 w-4" />}
                           {transaction.type === 'investment' && <TrendingUp className="h-4 w-4" />}
@@ -372,19 +373,19 @@ export default function Dashboard() {
                           {transaction.type === 'withdrawal' && <CreditCard className="h-4 w-4" />}
                         </div>
                         <div>
-                          <p className="font-medium capitalize">{transaction.type}</p>
-                          <p className="text-sm text-muted-foreground">{transaction.date}</p>
+                          <p className="font-medium capitalize text-white">{transaction.type}</p>
+                          <p className="text-sm text-gray-400">{transaction.date}</p>
                         </div>
                       </div>
                       <div className="text-right">
-                        <p className={`font-semibold ${transaction.amount > 0 ? 'text-green-600' : 'text-red-600'}`}>
+                        <p className={`font-semibold ${transaction.amount > 0 ? 'text-green-400' : 'text-red-400'}`}>
                           {transaction.amount > 0 ? '+' : ''}PKR {Math.abs(transaction.amount).toLocaleString()}
                         </p>
                       </div>
                     </div>
                   ))}
                 </div>
-                <Button variant="ghost" className="w-full mt-4" onClick={() => setCurrentTab('activity')}>
+                <Button variant="ghost" className="w-full mt-4 text-gray-300 hover:text-white hover:bg-gray-700" onClick={() => setCurrentTab('activity')}>
                   View All Transactions
                 </Button>
               </CardContent>
@@ -395,14 +396,14 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-br from-orange-50 to-red-50">
+    <div className="flex flex-col min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       {/* Header */}
-      <div className="bg-white shadow-sm border-b">
+      <div className="bg-gray-800/50 backdrop-blur-sm border-b border-gray-700 shadow-lg">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center gap-2">
             <span className="text-xl font-bold">
-              <span className="text-black dark:text-white">Invest</span>
-              <span className="text-blue-600">RO</span>
+              <span className="text-white">Invest</span>
+              <span className="text-blue-400">RO</span>
             </span>
           </div>
           
@@ -411,13 +412,13 @@ export default function Dashboard() {
               variant="ghost"
               size="sm"
               onClick={toggleTheme}
-              className="p-2 bg-[#0f1729] text-[#ffffff] hover:bg-[#0f1729]/90"
+              className="p-2 bg-gray-700 text-white hover:bg-gray-600"
               aria-label="Toggle theme"
             >
               {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
             </Button>
             
-            <Button onClick={handleSignOut} variant="outline" size="sm">
+            <Button onClick={handleSignOut} variant="outline" size="sm" className="border-gray-600 text-white hover:bg-gray-700">
               <LogOut className="h-4 w-4" />
             </Button>
           </div>
@@ -430,40 +431,41 @@ export default function Dashboard() {
 
       {/* Deposit Dialog */}
       <Dialog open={isDepositDialogOpen} onOpenChange={setIsDepositDialogOpen}>
-        <DialogContent>
+        <DialogContent className="bg-gray-800 border-gray-700">
           <DialogHeader>
-            <DialogTitle>Deposit Money</DialogTitle>
+            <DialogTitle className="text-white">Deposit Money</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div>
-              <Label htmlFor="amount">Amount (PKR)</Label>
+              <Label htmlFor="amount" className="text-gray-300">Amount (PKR)</Label>
               <Input
                 id="amount"
                 type="number"
                 placeholder="Enter amount (minimum PKR 100)"
                 value={depositAmount}
                 onChange={(e) => setDepositAmount(e.target.value)}
+                className="bg-gray-700/50 border-gray-600 text-white placeholder:text-gray-400"
               />
             </div>
             <div>
-              <Label htmlFor="payment-method">Payment Method</Label>
+              <Label htmlFor="payment-method" className="text-gray-300">Payment Method</Label>
               <Select value={paymentMethod} onValueChange={setPaymentMethod}>
-                <SelectTrigger>
+                <SelectTrigger className="bg-gray-700/50 border-gray-600 text-white">
                   <SelectValue placeholder="Select payment method" />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="bank-transfer">Bank Transfer</SelectItem>
-                  <SelectItem value="easypaisa">EasyPaisa</SelectItem>
-                  <SelectItem value="jazzcash">JazzCash</SelectItem>
-                  <SelectItem value="credit-card">Credit Card</SelectItem>
+                <SelectContent className="bg-gray-800 border-gray-700">
+                  <SelectItem value="bank-transfer" className="text-white focus:bg-gray-700">Bank Transfer</SelectItem>
+                  <SelectItem value="easypaisa" className="text-white focus:bg-gray-700">EasyPaisa</SelectItem>
+                  <SelectItem value="jazzcash" className="text-white focus:bg-gray-700">JazzCash</SelectItem>
+                  <SelectItem value="credit-card" className="text-white focus:bg-gray-700">Credit Card</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div className="flex gap-2">
-              <Button onClick={handleDeposit} className="flex-1">
+              <Button onClick={handleDeposit} className="flex-1 bg-blue-600 hover:bg-blue-700">
                 Deposit
               </Button>
-              <Button variant="outline" onClick={() => setIsDepositDialogOpen(false)} className="flex-1">
+              <Button variant="outline" onClick={() => setIsDepositDialogOpen(false)} className="flex-1 border-gray-600 text-white hover:bg-gray-700">
                 Cancel
               </Button>
             </div>
@@ -472,11 +474,11 @@ export default function Dashboard() {
       </Dialog>
 
       {/* Bottom Navigation */}
-      <div className="fixed bottom-0 left-0 right-0 bg-background border-t border-border">
+      <div className="fixed bottom-0 left-0 right-0 bg-gray-800/90 backdrop-blur-sm border-t border-gray-700">
         <div className="flex justify-between items-center px-4 py-2">
           <button 
             onClick={() => setCurrentTab('home')}
-            className={`flex flex-col items-center p-2 ${currentTab === 'home' ? 'text-primary' : 'text-muted-foreground'}`}
+            className={`flex flex-col items-center p-2 ${currentTab === 'home' ? 'text-blue-400' : 'text-gray-400'}`}
           >
             <Home size={24} />
             <span className="text-xs">Home</span>
@@ -484,7 +486,7 @@ export default function Dashboard() {
           
           <button 
             onClick={() => setCurrentTab('activity')}
-            className={`flex flex-col items-center p-2 ${currentTab === 'activity' ? 'text-primary' : 'text-muted-foreground'}`}
+            className={`flex flex-col items-center p-2 ${currentTab === 'activity' ? 'text-blue-400' : 'text-gray-400'}`}
           >
             <Activity size={24} />
             <span className="text-xs">Activity</span>
@@ -492,7 +494,7 @@ export default function Dashboard() {
           
           <button 
             onClick={() => setCurrentTab('wallet')}
-            className={`flex flex-col items-center p-2 ${currentTab === 'wallet' ? 'text-primary' : 'text-muted-foreground'}`}
+            className={`flex flex-col items-center p-2 ${currentTab === 'wallet' ? 'text-blue-400' : 'text-gray-400'}`}
           >
             <Wallet size={24} />
             <span className="text-xs">Wallet</span>
@@ -500,7 +502,7 @@ export default function Dashboard() {
           
           <button 
             onClick={() => setCurrentTab('profile')}
-            className={`flex flex-col items-center p-2 ${currentTab === 'profile' ? 'text-primary' : 'text-muted-foreground'}`}
+            className={`flex flex-col items-center p-2 ${currentTab === 'profile' ? 'text-blue-400' : 'text-gray-400'}`}
           >
             <User size={24} />
             <span className="text-xs">Profile</span>
@@ -508,18 +510,18 @@ export default function Dashboard() {
           
           <Sheet>
             <SheetTrigger asChild>
-              <button className="flex flex-col items-center p-2 text-muted-foreground">
+              <button className="flex flex-col items-center p-2 text-gray-400">
                 <Menu size={24} />
                 <span className="text-xs">Menu</span>
               </button>
             </SheetTrigger>
-            <SheetContent>
+            <SheetContent className="bg-gray-800 border-gray-700">
               <div className="flex flex-col gap-4 pt-10">
-                <Button variant="ghost" className="justify-start" onClick={() => setCurrentTab('settings')}>
+                <Button variant="ghost" className="justify-start text-white hover:bg-gray-700" onClick={() => setCurrentTab('settings')}>
                   <Settings className="mr-2" size={18} />
                   Settings
                 </Button>
-                <Button variant="ghost" className="justify-start" onClick={handleSignOut}>
+                <Button variant="ghost" className="justify-start text-white hover:bg-gray-700" onClick={handleSignOut}>
                   Sign Out
                 </Button>
               </div>
