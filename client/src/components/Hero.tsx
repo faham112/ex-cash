@@ -46,7 +46,7 @@ export default function Hero() {
           <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
             <Button 
               asChild 
-              className="bg-[#fac219] hover:bg-[#e6ae17] text-white font-semibold px-6 py-3 rounded-lg transition-all transform hover:scale-105"
+              className="bg-[#fac219] hover:bg-[#e6ae17] text-black font-semibold px-6 py-3 rounded-lg transition-all transform hover:scale-105"
             >
               <Link href="#plans" className="flex items-center gap-2">
                 Start Investing Now

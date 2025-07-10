@@ -16,6 +16,8 @@ High-Yield Investment Program (HYIP) web application for investRO.online featuri
 - **2025-01-10**: Updated all components from Firebase to Supabase authentication system with proper state management
 - **2025-01-10**: Implemented newsletter subscription functionality with database integration
 - **2025-01-10**: Added dark/light theme switcher with ThemeContext and toggle button in header
+- **2025-01-10**: Updated "Invest Now" buttons to use yellow color (#fac219) with proper theme separation
+- **2025-01-10**: Fixed InvestRO logo styling with "Invest" in black/white and "RO" in blue for both themes
 
 ## Project Architecture
 - **Frontend**: React with TypeScript, Tailwind CSS, shadcn/ui components
