@@ -21,9 +21,6 @@ export default function Header() {
           <Link href="/" className="text-white hover:text-primary transition-colors">
             Home
           </Link>
-          <Link href="#features" className="text-gray-300 hover:text-primary transition-colors">
-            Features
-          </Link>
           <Link href="#plans" className="text-gray-300 hover:text-primary transition-colors">
             Plans
           </Link>
@@ -60,9 +57,6 @@ export default function Header() {
           <div className="container mx-auto px-4 py-4 flex flex-col space-y-4">
             <Link href="/" className="text-white hover:text-primary transition-colors py-2">
               Home
-            </Link>
-            <Link href="#features" className="text-gray-300 hover:text-primary transition-colors py-2">
-              Features
             </Link>
             <Link href="#plans" className="text-gray-300 hover:text-primary transition-colors py-2">
               Plans
