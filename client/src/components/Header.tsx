@@ -11,28 +11,28 @@ export default function Header() {
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
   return (
-    <header className="bg-muted border-b border-border py-4">
+    <header className="bg-white border-b border-slate-200 py-4 shadow-sm dark:bg-muted dark:border-border dark:shadow-none">
       <div className="container mx-auto px-4 flex justify-between items-center">
         <div className="flex items-center">
-          <Link href="/" className="text-2xl font-bold text-white">
+          <Link href="/" className="text-2xl font-bold text-slate-900 dark:text-white">
             Invest<span className="text-primary">RO</span>
           </Link>
         </div>
         
         <nav className="hidden md:flex space-x-6">
-          <Link href="/" className="text-white hover:text-primary transition-colors">
+          <Link href="/" className="text-slate-900 hover:text-primary transition-colors dark:text-white">
             Home
           </Link>
-          <Link href="#plans" className="text-gray-300 hover:text-primary transition-colors">
+          <Link href="#plans" className="text-slate-600 hover:text-primary transition-colors dark:text-gray-300">
             Plans
           </Link>
-          <Link href="#calculator" className="text-gray-300 hover:text-primary transition-colors">
+          <Link href="#calculator" className="text-slate-600 hover:text-primary transition-colors dark:text-gray-300">
             Calculator
           </Link>
-          <Link href="#how-it-works" className="text-gray-300 hover:text-primary transition-colors">
+          <Link href="#how-it-works" className="text-slate-600 hover:text-primary transition-colors dark:text-gray-300">
             About
           </Link>
-          <Link href="#contact" className="text-gray-300 hover:text-primary transition-colors">
+          <Link href="#contact" className="text-slate-600 hover:text-primary transition-colors dark:text-gray-300">
             Contact
           </Link>
         </nav>
@@ -53,7 +53,7 @@ export default function Header() {
             </Button>
           </Link>
           <button 
-            className="md:hidden ml-2 text-gray-400 hover:text-white"
+            className="md:hidden ml-2 text-slate-600 hover:text-slate-900 dark:text-gray-400 dark:hover:text-white"
             onClick={toggleMenu}
             aria-label="Toggle menu"
           >
@@ -64,21 +64,21 @@ export default function Header() {
 
       {/* Mobile menu */}
       {isMenuOpen && (
-        <div className="md:hidden bg-muted border-t border-border mt-4">
+        <div className="md:hidden bg-white border-t border-slate-200 mt-4 dark:bg-muted dark:border-border">
           <div className="container mx-auto px-4 py-4 flex flex-col space-y-4">
-            <Link href="/" className="text-white hover:text-primary transition-colors py-2">
+            <Link href="/" className="text-slate-900 hover:text-primary transition-colors py-2 dark:text-white">
               Home
             </Link>
-            <Link href="#plans" className="text-gray-300 hover:text-primary transition-colors py-2">
+            <Link href="#plans" className="text-slate-600 hover:text-primary transition-colors py-2 dark:text-gray-300">
               Plans
             </Link>
-            <Link href="#calculator" className="text-gray-300 hover:text-primary transition-colors py-2">
+            <Link href="#calculator" className="text-slate-600 hover:text-primary transition-colors py-2 dark:text-gray-300">
               Calculator
             </Link>
-            <Link href="#how-it-works" className="text-gray-300 hover:text-primary transition-colors py-2">
+            <Link href="#how-it-works" className="text-slate-600 hover:text-primary transition-colors py-2 dark:text-gray-300">
               About
             </Link>
-            <Link href="#contact" className="text-gray-300 hover:text-primary transition-colors py-2">
+            <Link href="#contact" className="text-slate-600 hover:text-primary transition-colors py-2 dark:text-gray-300">
               Contact
             </Link>
           </div>
