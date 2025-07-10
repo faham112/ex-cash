@@ -44,7 +44,7 @@ export default function Plans() {
                   ))}
                 </ul>
                 <Button 
-                  className={`w-full ${plan.popular ? 'bg-primary hover:bg-primary/90 text-primary-foreground font-semibold' : 'bg-muted hover:bg-primary hover:text-primary-foreground'}`}
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold"
                 >
                   Invest Now
                 </Button>

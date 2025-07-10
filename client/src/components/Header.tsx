@@ -14,8 +14,8 @@ export default function Header() {
     <header className="bg-white border-b border-slate-200 py-4 shadow-sm dark:bg-muted dark:border-border dark:shadow-none">
       <div className="container mx-auto px-4 flex justify-between items-center">
         <div className="flex items-center">
-          <Link href="/" className="text-2xl font-bold text-slate-900 dark:text-white">
-            Invest<span className="text-primary">RO</span>
+          <Link href="/" className="text-2xl font-bold">
+            <span className="text-black dark:text-white">Invest</span><span className="text-blue-600">RO</span>
           </Link>
         </div>
         
