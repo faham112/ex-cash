@@ -74,7 +74,7 @@ export default function Dashboard() {
               variant="ghost"
               size="sm"
               onClick={toggleTheme}
-              className="p-2"
+              className="p-2 bg-[#0f1729] text-[#ffffff] hover:bg-[#0f1729]/90"
               aria-label="Toggle theme"
             >
               {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
