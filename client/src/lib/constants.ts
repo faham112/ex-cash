@@ -93,6 +93,6 @@ export const planDays = {
   'vip': 90
 };
 export const ADMIN_CREDENTIALS = {
-  email: "Faham112",
+  username: "Faham112",
   password: "Faham@112"
 };
