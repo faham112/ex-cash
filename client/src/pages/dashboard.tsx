@@ -67,8 +67,7 @@ export default function Dashboard() {
           </div>
           
           <Button onClick={handleSignOut} variant="outline" size="sm">
-            <LogOut className="h-4 w-4 mr-2" />
-            Sign Out
+            <LogOut className="h-4 w-4" />
           </Button>
         </div>
       </div>
