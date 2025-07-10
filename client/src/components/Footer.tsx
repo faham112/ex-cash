@@ -66,7 +66,7 @@ export default function Footer() {
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 mb-12">
           <div>
-            <Link href="/" className="text-2xl font-bold text-white mb-4 inline-block">
+            <Link href="/" className="text-2xl font-bold mb-4 inline-block text-[#020817]">
               Invest<span className="text-primary">RO</span>
             </Link>
             <p className="text-muted-foreground mb-4">
