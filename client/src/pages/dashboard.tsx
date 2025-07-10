@@ -61,8 +61,8 @@ export default function Dashboard() {
       <div className="bg-white shadow-sm border-b">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-6 bg-gradient-to-r from-blue-600 to-purple-600 rounded-md flex items-center justify-center">
-              <span className="text-white font-bold text-xs">3RD</span>
+            <div className="w-8 h-6 border-2 border-blue-600 rounded-md flex items-center justify-center">
+              <span className="text-blue-600 font-bold text-xs">3RD</span>
             </div>
             <span className="text-xl font-bold">
               <span className="text-black dark:text-white">Invest</span>
