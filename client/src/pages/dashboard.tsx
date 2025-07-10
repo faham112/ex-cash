@@ -58,7 +58,7 @@ export default function Dashboard() {
       {/* Header with Hello World */}
       <div className="bg-white shadow-sm border-b">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <h1 className="text-xl font-bold text-orange-600">InvestRO Dashboard</h1>
+          <h1 className="text-xl text-orange-600 font-bold">InvestRO</h1>
           
           {/* Hello World Section */}
           <div className="text-center flex-1 mx-8">
@@ -72,7 +72,6 @@ export default function Dashboard() {
           </Button>
         </div>
       </div>
-
       <div className="container mx-auto p-4 flex-grow">
         {/* Welcome Card */}
         <Card className="mb-6">
@@ -126,7 +125,6 @@ export default function Dashboard() {
           </CardContent>
         </Card>
       </div>
-
       {/* Bottom Navigation */}
       <div className="fixed bottom-0 left-0 right-0 bg-background border-t border-border">
         <div className="flex justify-between items-center px-4 py-2">
