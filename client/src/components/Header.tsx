@@ -59,11 +59,12 @@ export default function Header() {
         </nav>
 
         <div className="flex items-center gap-2">
+          {/* Theme Toggle Button - Visible on all screens */}
           <Button
             variant="ghost"
             size="sm"
             onClick={toggleTheme}
-            className="p-2 hidden md:flex"
+            className="p-2"
             aria-label="Toggle theme"
           >
             {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
