@@ -242,7 +242,7 @@ export default function Dashboard() {
       default:
         return (
           <>
-            {/* Enhanced Stats Cards */}
+            {/* Welcome Header */}
             <Card className="mb-6">
               <CardHeader>
                 <div className="flex items-center justify-between">
@@ -258,33 +258,92 @@ export default function Dashboard() {
                   </Button>
                 </div>
               </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                  <div className="bg-gradient-to-r from-green-100 to-green-200 p-4 rounded-lg">
-                    <h3 className="font-semibold text-green-800">Total Balance</h3>
-                    <p className="text-2xl font-bold text-green-600">
-                      {showBalance ? `PKR ${userStats.balance.toLocaleString()}` : 'PKR ****'}
-                    </p>
-                  </div>
-                  <div className="bg-gradient-to-r from-blue-100 to-blue-200 p-4 rounded-lg">
-                    <h3 className="font-semibold text-blue-800">Active Investments</h3>
-                    <p className="text-2xl font-bold text-blue-600">{userStats.activeInvestments}</p>
-                  </div>
-                  <div className="bg-gradient-to-r from-purple-100 to-purple-200 p-4 rounded-lg">
-                    <h3 className="font-semibold text-purple-800">Total Earnings</h3>
-                    <p className="text-2xl font-bold text-purple-600">
-                      {showBalance ? `PKR ${userStats.totalEarnings.toLocaleString()}` : 'PKR ****'}
-                    </p>
-                  </div>
-                  <div className="bg-gradient-to-r from-orange-100 to-orange-200 p-4 rounded-lg">
-                    <h3 className="font-semibold text-orange-800">Today's Earnings</h3>
-                    <p className="text-2xl font-bold text-orange-600">
-                      {showBalance ? `PKR ${userStats.todayEarnings.toLocaleString()}` : 'PKR ****'}
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
             </Card>
+
+            {/* 2x2 Grid System for Investment Stats */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              {/* Total Balance Card */}
+              <Card className="bg-gradient-to-br from-green-50 to-green-100 border-green-200">
+                <CardHeader className="pb-3">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-lg font-semibold text-green-800 flex items-center gap-2">
+                      <Wallet className="h-5 w-5" />
+                      Total Balance
+                    </CardTitle>
+                    <div className="p-2 bg-green-200 rounded-full">
+                      <DollarSign className="h-4 w-4 text-green-700" />
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-3xl font-bold text-green-600 mb-2">
+                    {showBalance ? `PKR ${userStats.balance.toLocaleString()}` : 'PKR ****'}
+                  </p>
+                  <p className="text-sm text-green-700">Available for investment</p>
+                </CardContent>
+              </Card>
+
+              {/* Active Investments Card */}
+              <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
+                <CardHeader className="pb-3">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-lg font-semibold text-blue-800 flex items-center gap-2">
+                      <TrendingUp className="h-5 w-5" />
+                      Active Investments
+                    </CardTitle>
+                    <div className="p-2 bg-blue-200 rounded-full">
+                      <Activity className="h-4 w-4 text-blue-700" />
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-3xl font-bold text-blue-600 mb-2">{userStats.activeInvestments}</p>
+                  <p className="text-sm text-blue-700">Currently running plans</p>
+                </CardContent>
+              </Card>
+
+              {/* Total Earnings Card */}
+              <Card className="bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200">
+                <CardHeader className="pb-3">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-lg font-semibold text-purple-800 flex items-center gap-2">
+                      <Plus className="h-5 w-5" />
+                      Total Earnings
+                    </CardTitle>
+                    <div className="p-2 bg-purple-200 rounded-full">
+                      <DollarSign className="h-4 w-4 text-purple-700" />
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-3xl font-bold text-purple-600 mb-2">
+                    {showBalance ? `PKR ${userStats.totalEarnings.toLocaleString()}` : 'PKR ****'}
+                  </p>
+                  <p className="text-sm text-purple-700">Lifetime profits earned</p>
+                </CardContent>
+              </Card>
+
+              {/* Today's Earnings Card */}
+              <Card className="bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200">
+                <CardHeader className="pb-3">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-lg font-semibold text-orange-800 flex items-center gap-2">
+                      <Activity className="h-5 w-5" />
+                      Today's Earnings
+                    </CardTitle>
+                    <div className="p-2 bg-orange-200 rounded-full">
+                      <TrendingUp className="h-4 w-4 text-orange-700" />
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-3xl font-bold text-orange-600 mb-2">
+                    {showBalance ? `PKR ${userStats.todayEarnings.toLocaleString()}` : 'PKR ****'}
+                  </p>
+                  <p className="text-sm text-orange-700">Earned today</p>
+                </CardContent>
+              </Card>
+            </div>
 
             {/* Quick Actions */}
             <Card className="mb-6">
