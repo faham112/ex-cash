@@ -4,15 +4,17 @@ import { useLocation } from "wouter";
 import { useAuth } from "@/components/Auth/AuthProvider";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Home, User, Wallet, Settings, Menu, Activity, LogOut } from "lucide-react";
+import { Home, User, Wallet, Settings, Menu, Activity, LogOut, Sun, Moon } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useToast } from "@/hooks/use-toast";
+import { useTheme } from "@/contexts/ThemeContext";
 
 export default function Dashboard() {
   const [, setLocation] = useLocation();
   const [currentTab, setCurrentTab] = useState('home');
   const { user, loading, signOut } = useAuth();
   const { toast } = useToast();
+  const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
     if (!loading && !user) {
@@ -66,9 +68,23 @@ export default function Dashboard() {
             <p className="text-gray-600 mt-1">Welcome to your investment dashboard</p>
           </div>
           
-          <Button onClick={handleSignOut} variant="outline" size="sm">
-            <LogOut className="h-4 w-4" />
-          </Button>
+          <div className="flex items-center gap-2">
+            {/* Theme Toggle Button */}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={toggleTheme}
+              className="p-2"
+              aria-label="Toggle theme"
+            >
+              {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+            </Button>
+            
+            {/* Sign Out Button */}
+            <Button onClick={handleSignOut} variant="outline" size="sm">
+              <LogOut className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
       </div>
       <div className="container mx-auto p-4 flex-grow">
