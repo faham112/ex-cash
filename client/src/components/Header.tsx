@@ -68,9 +68,18 @@ export default function Header() {
           >
             {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
           </Button>
+          
+          {/* Desktop Login Button */}
           <Link href="/login" className="hidden md:block">
             <Button variant="outline" size="sm" className="flex items-center gap-2">
               <User className="h-4 w-4" /> Login
+            </Button>
+          </Link>
+          
+          {/* Mobile Login Button */}
+          <Link href="/login" className="md:hidden">
+            <Button variant="outline" size="sm" className="flex items-center gap-2">
+              <User className="h-4 w-4" />
             </Button>
           </Link>
           
