@@ -4,7 +4,12 @@ import { useLocation } from "wouter";
 import { useAuth } from "@/components/Auth/AuthProvider";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Home, User, Wallet, Settings, Menu, Activity, LogOut, Sun, Moon } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Home, User, Wallet, Settings, Menu, Activity, LogOut, Sun, Moon, Plus, TrendingUp, DollarSign, CreditCard, History, Eye, EyeOff } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useToast } from "@/hooks/use-toast";
 import { useTheme } from "@/contexts/ThemeContext";
@@ -12,9 +17,29 @@ import { useTheme } from "@/contexts/ThemeContext";
 export default function Dashboard() {
   const [, setLocation] = useLocation();
   const [currentTab, setCurrentTab] = useState('home');
+  const [depositAmount, setDepositAmount] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState('');
+  const [showBalance, setShowBalance] = useState(true);
+  const [isDepositDialogOpen, setIsDepositDialogOpen] = useState(false);
   const { user, loading, signOut } = useAuth();
   const { toast } = useToast();
   const { theme, toggleTheme } = useTheme();
+
+  // Mock data - in real app, this would come from API
+  const [userStats, setUserStats] = useState({
+    balance: 25000,
+    activeInvestments: 3,
+    totalEarnings: 8500,
+    todayEarnings: 150,
+    monthlyEarnings: 3200
+  });
+
+  const [recentTransactions] = useState([
+    { id: 1, type: 'deposit', amount: 10000, date: '2024-01-10', status: 'completed' },
+    { id: 2, type: 'investment', amount: -5000, date: '2024-01-09', status: 'completed' },
+    { id: 3, type: 'profit', amount: 250, date: '2024-01-08', status: 'completed' },
+    { id: 4, type: 'withdrawal', amount: -2000, date: '2024-01-07', status: 'pending' }
+  ]);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -40,6 +65,42 @@ export default function Dashboard() {
     }
   };
 
+  const handleDeposit = () => {
+    if (!depositAmount || !paymentMethod) {
+      toast({
+        title: "Error",
+        description: "Please fill in all fields",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const amount = parseFloat(depositAmount);
+    if (amount < 100) {
+      toast({
+        title: "Error",
+        description: "Minimum deposit amount is PKR 100",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Simulate deposit processing
+    setUserStats(prev => ({
+      ...prev,
+      balance: prev.balance + amount
+    }));
+
+    toast({
+      title: "Deposit Initiated",
+      description: `PKR ${amount.toLocaleString()} deposit request submitted via ${paymentMethod}`,
+    });
+
+    setDepositAmount('');
+    setPaymentMethod('');
+    setIsDepositDialogOpen(false);
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -52,12 +113,260 @@ export default function Dashboard() {
   }
 
   if (!user) {
-    return null; // Will redirect to login via useEffect
+    return null;
   }
+
+  const renderTabContent = () => {
+    switch (currentTab) {
+      case 'activity':
+        return (
+          <div className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <History className="h-5 w-5" />
+                  Recent Transactions
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {recentTransactions.map((transaction) => (
+                    <div key={transaction.id} className="flex items-center justify-between p-3 border rounded-lg">
+                      <div className="flex items-center gap-3">
+                        <div className={`p-2 rounded-full ${
+                          transaction.type === 'deposit' ? 'bg-green-100 text-green-600' :
+                          transaction.type === 'investment' ? 'bg-blue-100 text-blue-600' :
+                          transaction.type === 'profit' ? 'bg-purple-100 text-purple-600' :
+                          'bg-orange-100 text-orange-600'
+                        }`}>
+                          {transaction.type === 'deposit' && <Plus className="h-4 w-4" />}
+                          {transaction.type === 'investment' && <TrendingUp className="h-4 w-4" />}
+                          {transaction.type === 'profit' && <DollarSign className="h-4 w-4" />}
+                          {transaction.type === 'withdrawal' && <CreditCard className="h-4 w-4" />}
+                        </div>
+                        <div>
+                          <p className="font-medium capitalize">{transaction.type}</p>
+                          <p className="text-sm text-muted-foreground">{transaction.date}</p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className={`font-semibold ${transaction.amount > 0 ? 'text-green-600' : 'text-red-600'}`}>
+                          {transaction.amount > 0 ? '+' : ''}PKR {Math.abs(transaction.amount).toLocaleString()}
+                        </p>
+                        <p className={`text-xs ${
+                          transaction.status === 'completed' ? 'text-green-600' : 'text-orange-600'
+                        }`}>
+                          {transaction.status}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        );
+      
+      case 'wallet':
+        return (
+          <div className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Wallet className="h-5 w-5" />
+                  Wallet Overview
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="p-4 border rounded-lg">
+                    <h3 className="font-semibold text-gray-600">Available Balance</h3>
+                    <p className="text-2xl font-bold text-green-600">PKR {userStats.balance.toLocaleString()}</p>
+                  </div>
+                  <div className="p-4 border rounded-lg">
+                    <h3 className="font-semibold text-gray-600">Total Invested</h3>
+                    <p className="text-2xl font-bold text-blue-600">PKR 15,000</p>
+                  </div>
+                </div>
+                <div className="mt-4 flex gap-2">
+                  <Dialog open={isDepositDialogOpen} onOpenChange={setIsDepositDialogOpen}>
+                    <DialogTrigger asChild>
+                      <Button className="flex-1">
+                        <Plus className="h-4 w-4 mr-2" />
+                        Deposit Money
+                      </Button>
+                    </DialogTrigger>
+                  </Dialog>
+                  <Button variant="outline" className="flex-1">
+                    <CreditCard className="h-4 w-4 mr-2" />
+                    Withdraw
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        );
+      
+      case 'profile':
+        return (
+          <div className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <User className="h-5 w-5" />
+                  Profile Information
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div>
+                    <Label>Email</Label>
+                    <Input value={user.email} disabled />
+                  </div>
+                  <div>
+                    <Label>Account Status</Label>
+                    <div className="flex items-center gap-2 mt-1">
+                      <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-sm">Verified</span>
+                    </div>
+                  </div>
+                  <div>
+                    <Label>Member Since</Label>
+                    <p className="text-sm text-muted-foreground mt-1">January 2024</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        );
+      
+      default:
+        return (
+          <>
+            {/* Enhanced Stats Cards */}
+            <Card className="mb-6">
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-2xl text-orange-600">
+                    Welcome back, {user.email?.split('@')[0]}!
+                  </CardTitle>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowBalance(!showBalance)}
+                  >
+                    {showBalance ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <div className="bg-gradient-to-r from-green-100 to-green-200 p-4 rounded-lg">
+                    <h3 className="font-semibold text-green-800">Total Balance</h3>
+                    <p className="text-2xl font-bold text-green-600">
+                      {showBalance ? `PKR ${userStats.balance.toLocaleString()}` : 'PKR ****'}
+                    </p>
+                  </div>
+                  <div className="bg-gradient-to-r from-blue-100 to-blue-200 p-4 rounded-lg">
+                    <h3 className="font-semibold text-blue-800">Active Investments</h3>
+                    <p className="text-2xl font-bold text-blue-600">{userStats.activeInvestments}</p>
+                  </div>
+                  <div className="bg-gradient-to-r from-purple-100 to-purple-200 p-4 rounded-lg">
+                    <h3 className="font-semibold text-purple-800">Total Earnings</h3>
+                    <p className="text-2xl font-bold text-purple-600">
+                      {showBalance ? `PKR ${userStats.totalEarnings.toLocaleString()}` : 'PKR ****'}
+                    </p>
+                  </div>
+                  <div className="bg-gradient-to-r from-orange-100 to-orange-200 p-4 rounded-lg">
+                    <h3 className="font-semibold text-orange-800">Today's Earnings</h3>
+                    <p className="text-2xl font-bold text-orange-600">
+                      {showBalance ? `PKR ${userStats.todayEarnings.toLocaleString()}` : 'PKR ****'}
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Quick Actions */}
+            <Card className="mb-6">
+              <CardHeader>
+                <CardTitle>Quick Actions</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <Dialog open={isDepositDialogOpen} onOpenChange={setIsDepositDialogOpen}>
+                    <DialogTrigger asChild>
+                      <Button className="h-16 flex flex-col bg-green-600 hover:bg-green-700">
+                        <Plus className="h-5 w-5 mb-1" />
+                        <span className="text-sm">Deposit</span>
+                      </Button>
+                    </DialogTrigger>
+                  </Dialog>
+                  <Button variant="outline" className="h-16 flex flex-col">
+                    <TrendingUp className="h-5 w-5 mb-1" />
+                    <span className="text-sm">Invest</span>
+                  </Button>
+                  <Button variant="outline" className="h-16 flex flex-col">
+                    <CreditCard className="h-5 w-5 mb-1" />
+                    <span className="text-sm">Withdraw</span>
+                  </Button>
+                  <Button variant="outline" className="h-16 flex flex-col">
+                    <Settings className="h-5 w-5 mb-1" />
+                    <span className="text-sm">Settings</span>
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Recent Activity */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Activity className="h-5 w-5" />
+                  Recent Activity
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {recentTransactions.slice(0, 3).map((transaction) => (
+                    <div key={transaction.id} className="flex items-center justify-between p-3 border rounded-lg">
+                      <div className="flex items-center gap-3">
+                        <div className={`p-2 rounded-full ${
+                          transaction.type === 'deposit' ? 'bg-green-100 text-green-600' :
+                          transaction.type === 'investment' ? 'bg-blue-100 text-blue-600' :
+                          transaction.type === 'profit' ? 'bg-purple-100 text-purple-600' :
+                          'bg-orange-100 text-orange-600'
+                        }`}>
+                          {transaction.type === 'deposit' && <Plus className="h-4 w-4" />}
+                          {transaction.type === 'investment' && <TrendingUp className="h-4 w-4" />}
+                          {transaction.type === 'profit' && <DollarSign className="h-4 w-4" />}
+                          {transaction.type === 'withdrawal' && <CreditCard className="h-4 w-4" />}
+                        </div>
+                        <div>
+                          <p className="font-medium capitalize">{transaction.type}</p>
+                          <p className="text-sm text-muted-foreground">{transaction.date}</p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className={`font-semibold ${transaction.amount > 0 ? 'text-green-600' : 'text-red-600'}`}>
+                          {transaction.amount > 0 ? '+' : ''}PKR {Math.abs(transaction.amount).toLocaleString()}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <Button variant="ghost" className="w-full mt-4" onClick={() => setCurrentTab('activity')}>
+                  View All Transactions
+                </Button>
+              </CardContent>
+            </Card>
+          </>
+        );
+    }
+  };
 
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-orange-50 to-red-50">
-      {/* Header with Hello World */}
+      {/* Header */}
       <div className="bg-white shadow-sm border-b">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center gap-2">
@@ -67,10 +376,7 @@ export default function Dashboard() {
             </span>
           </div>
           
-
-          
           <div className="flex items-center gap-2">
-            {/* Theme Toggle Button */}
             <Button
               variant="ghost"
               size="sm"
@@ -81,66 +387,60 @@ export default function Dashboard() {
               {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
             </Button>
             
-            {/* Sign Out Button */}
             <Button onClick={handleSignOut} variant="outline" size="sm">
               <LogOut className="h-4 w-4" />
             </Button>
           </div>
         </div>
       </div>
-      <div className="container mx-auto p-4 flex-grow">
-        {/* Welcome Card */}
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle className="text-2xl text-orange-600">
-              Welcome back, {user.email}!
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="bg-gradient-to-r from-green-100 to-green-200 p-4 rounded-lg">
-                <h3 className="font-semibold text-green-800">Total Balance</h3>
-                <p className="text-2xl font-bold text-green-600">PKR 0.00</p>
-              </div>
-              <div className="bg-gradient-to-r from-blue-100 to-blue-200 p-4 rounded-lg">
-                <h3 className="font-semibold text-blue-800">Active Investments</h3>
-                <p className="text-2xl font-bold text-blue-600">0</p>
-              </div>
-              <div className="bg-gradient-to-r from-purple-100 to-purple-200 p-4 rounded-lg">
-                <h3 className="font-semibold text-purple-800">Total Earnings</h3>
-                <p className="text-2xl font-bold text-purple-600">PKR 0.00</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
 
-        {/* Quick Actions */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Quick Actions</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <Button className="h-16 flex flex-col">
-                <Wallet className="h-5 w-5 mb-1" />
-                <span className="text-sm">Deposit</span>
+      <div className="container mx-auto p-4 flex-grow pb-20">
+        {renderTabContent()}
+      </div>
+
+      {/* Deposit Dialog */}
+      <Dialog open={isDepositDialogOpen} onOpenChange={setIsDepositDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Deposit Money</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="amount">Amount (PKR)</Label>
+              <Input
+                id="amount"
+                type="number"
+                placeholder="Enter amount (minimum PKR 100)"
+                value={depositAmount}
+                onChange={(e) => setDepositAmount(e.target.value)}
+              />
+            </div>
+            <div>
+              <Label htmlFor="payment-method">Payment Method</Label>
+              <Select value={paymentMethod} onValueChange={setPaymentMethod}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select payment method" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="bank-transfer">Bank Transfer</SelectItem>
+                  <SelectItem value="easypaisa">EasyPaisa</SelectItem>
+                  <SelectItem value="jazzcash">JazzCash</SelectItem>
+                  <SelectItem value="credit-card">Credit Card</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex gap-2">
+              <Button onClick={handleDeposit} className="flex-1">
+                Deposit
               </Button>
-              <Button variant="outline" className="h-16 flex flex-col">
-                <Activity className="h-5 w-5 mb-1" />
-                <span className="text-sm">Invest</span>
-              </Button>
-              <Button variant="outline" className="h-16 flex flex-col">
-                <User className="h-5 w-5 mb-1" />
-                <span className="text-sm">Profile</span>
-              </Button>
-              <Button variant="outline" className="h-16 flex flex-col">
-                <Settings className="h-5 w-5 mb-1" />
-                <span className="text-sm">Settings</span>
+              <Button variant="outline" onClick={() => setIsDepositDialogOpen(false)} className="flex-1">
+                Cancel
               </Button>
             </div>
-          </CardContent>
-        </Card>
-      </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       {/* Bottom Navigation */}
       <div className="fixed bottom-0 left-0 right-0 bg-background border-t border-border">
         <div className="flex justify-between items-center px-4 py-2">
