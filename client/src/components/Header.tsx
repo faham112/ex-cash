@@ -36,9 +36,6 @@ export default function Header() {
       <div className="container mx-auto px-4 flex justify-between items-center">
         <div className="flex items-center">
           <Link href="/" className="flex items-center gap-2">
-            <div className="w-12 h-8 border-2 border-blue-600 rounded-lg flex items-center justify-center">
-              <span className="text-blue-600 font-bold text-sm">3RD</span>
-            </div>
             <span className="text-2xl font-bold">
               <span className="text-black dark:text-white">Invest</span>
               <span className="text-blue-600">RO</span>
@@ -100,9 +97,6 @@ export default function Header() {
             <SheetContent side="right" className="w-80">
               <SheetHeader>
                 <SheetTitle className="flex items-center gap-2 text-left">
-                  <div className="w-8 h-6 border-2 border-blue-600 rounded-md flex items-center justify-center">
-                    <span className="text-blue-600 font-bold text-xs">3RD</span>
-                  </div>
                   <span className="text-black dark:text-white">Invest</span><span className="text-blue-600">RO</span>
                   <span className="text-sm text-muted-foreground ml-2">Menu</span>
                 </SheetTitle>
