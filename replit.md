@@ -1,103 +1,72 @@
-# Investment Portfolio Tracker
+# InvestRO - HYIP Investment Platform
 
-## Overview
+## Project Overview
+High-Yield Investment Program (HYIP) web application for investRO.online featuring investment plans, calculator for returns, and user account management. The platform allows users to invest money and earn returns according to different investment plans.
 
-This is a full-stack investment portfolio tracking application built with React frontend and Express backend. The application allows users to manage their investment portfolio by adding, viewing, updating, and deleting investment positions. It features a modern UI with dashboard analytics, portfolio overview, and detailed investment management.
+## Recent Changes
+- **2025-01-10**: Project replaced with user's comprehensive InvestRoTracker codebase
+- **2025-01-10**: Added prominent "Hello World" header to dashboard as requested
+- **2025-01-10**: Complete Supabase database integration implemented
+- **2025-01-10**: Created comprehensive database schema with users, plans, investments, transactions, referrals tables
+- **2025-01-10**: Implemented Supabase authentication system with AuthProvider component
+- **2025-01-10**: Updated all storage operations to use Supabase PostgreSQL backend
+- **2025-01-10**: Added comprehensive API endpoints for all database operations
+- **2025-01-10**: User provided Supabase credentials via Replit Secrets
+- **2025-01-10**: Fixed authentication flow issues: disabled email verification for easier registration and corrected login redirect to dashboard
+- **2025-01-10**: Updated all components from Firebase to Supabase authentication system with proper state management
+
+## Project Architecture
+- **Frontend**: React with TypeScript, Tailwind CSS, shadcn/ui components
+- **Backend**: Node.js with Express.js
+- **Database**: Supabase (PostgreSQL) - Fully integrated with complete schema
+- **Authentication**: Supabase Auth with AuthProvider context
+- **Routing**: Wouter for client-side routing
+- **State Management**: TanStack Query for server state
+- **Forms**: React Hook Form with Zod validation
+- **API**: RESTful endpoints for all database operations
 
 ## User Preferences
+- Focus on modern web design principles
+- Responsive design for mobile, tablet, and desktop
+- Professional appearance suitable for financial platform
+- PKR (Pakistani Rupee) currency formatting
 
-Preferred communication style: Simple, everyday language.
+## Features Implemented
+- **Landing Page**: Hero section with professional design
+- **Investment Plans**: 6 tiers stored in database (Starter, Silver, Gold, Platinum, Diamond, VIP)
+- **Investment Calculator**: Real-time calculations using database-stored plan data
+- **Database Operations**: Complete CRUD operations for all entities
+- **User Authentication**: Supabase Auth with login/register functionality
+- **API Endpoints**: RESTful API for plans, stats, users, investments, transactions, referrals
+- **Features Showcase**: Dynamic content presentation
+- **Community Integration**: WhatsApp/Telegram links
+- **Professional UI**: Header, footer, and responsive design
 
-## System Architecture
+## Database Schema
+- **Users**: Authentication, profile, balance, referral system
+- **Plans**: Investment plans with ROI, duration, limits, features
+- **Investments**: User investments with tracking and status
+- **Transactions**: Deposits, withdrawals, profits, bonuses
+- **Referrals**: Multi-level referral system with commissions
 
-### Frontend Architecture
-- **Framework**: React 18 with TypeScript
-- **Build Tool**: Vite for fast development and optimized builds
-- **UI Framework**: Shadcn/UI components built on Radix UI primitives
-- **Styling**: Tailwind CSS with custom CSS variables for theming
-- **State Management**: TanStack Query (React Query) for server state management
-- **Routing**: Wouter for lightweight client-side routing
-- **Form Management**: React Hook Form with Zod validation
+## Investment Plans
+1. **Starter Plan**: 1.5% daily ROI, 10 days, PKR 50-500
+2. **Silver Plan**: 2.2% daily ROI, 20 days, PKR 500-2000
+3. **Gold Plan**: 3.0% daily ROI, 30 days, PKR 2000-5000 (Popular)
+4. **Platinum Plan**: 3.8% daily ROI, 45 days, PKR 5000-10000
+5. **Diamond Plan**: 4.5% daily ROI, 60 days, PKR 10000-25000
+6. **VIP Plan**: 5.5% daily ROI, 90 days, PKR 25000+
 
-### Backend Architecture
-- **Runtime**: Node.js with Express.js framework
-- **Language**: TypeScript with ES modules
-- **Database**: PostgreSQL with Drizzle ORM
-- **Database Provider**: Neon Database (serverless PostgreSQL)
-- **Validation**: Zod schemas for request/response validation
-- **Development**: Hot reload with Vite integration
+## Authentication Flow Status
+- **Registration**: Users can register without email verification (immediate account creation)
+- **Login**: Proper authentication with redirect to dashboard
+- **Dashboard**: Protected route with user authentication state management
+- **Logout**: Secure signout with proper state cleanup
 
-## Key Components
-
-### Database Schema
-- **Investments Table**: Stores investment positions with fields for symbol, company name, shares, purchase price, current price, and purchase date
-- **Users Table**: Basic user management (prepared but not fully implemented)
-- **Migrations**: Drizzle Kit handles database schema migrations
-
-### API Endpoints
-- `GET /api/investments` - Retrieve all investments
-- `GET /api/investments/:id` - Retrieve specific investment
-- `POST /api/investments` - Create new investment
-- `PUT /api/investments/:id` - Update existing investment
-- `DELETE /api/investments/:id` - Delete investment
-
-### Frontend Components
-- **Dashboard**: Main page with portfolio overview and investment management
-- **Portfolio Overview**: Displays total portfolio value, gains/losses, and key metrics
-- **Investment Form**: Add new investments with validation
-- **Investment List**: Display and manage existing investments
-- **Quick Stats**: Portfolio performance indicators
-- **Recent Activity**: Mock activity feed
-
-### UI Components
-- Comprehensive Shadcn/UI component library
-- Custom styling with CSS variables for consistent theming
-- Responsive design with mobile-first approach
-- Toast notifications for user feedback
-
-## Data Flow
-
-1. **Client Request**: React components make API calls using TanStack Query
-2. **API Processing**: Express server validates requests with Zod schemas
-3. **Database Operations**: Drizzle ORM executes SQL queries against PostgreSQL
-4. **Response**: Data flows back through the API to update React Query cache
-5. **UI Update**: Components re-render with fresh data automatically
-
-## External Dependencies
-
-### Backend Dependencies
-- **@neondatabase/serverless**: Neon Database connection driver
-- **drizzle-orm**: Type-safe ORM for PostgreSQL
-- **drizzle-kit**: Database migration and introspection toolkit
-- **express**: Web application framework
-- **zod**: Schema validation library
-
-### Frontend Dependencies
-- **@tanstack/react-query**: Data fetching and caching
-- **@radix-ui/***: Accessible UI component primitives
-- **react-hook-form**: Form state management
-- **wouter**: Lightweight routing
-- **tailwindcss**: Utility-first CSS framework
-- **date-fns**: Date manipulation utilities
-
-## Deployment Strategy
-
-### Development
-- Vite dev server for frontend with hot module replacement
-- Express server with TypeScript compilation via tsx
-- Database migrations handled by Drizzle Kit
-- Environment variables for database configuration
-
-### Production Build
-- Frontend: Vite builds optimized static assets
-- Backend: esbuild bundles Express server for Node.js
-- Database: Drizzle migrations applied via `db:push` command
-- Static assets served by Express in production
-
-### Configuration
-- TypeScript configuration supports both client and server code
-- Path aliases configured for clean imports
-- PostCSS with Tailwind CSS processing
-- ESM modules throughout the application
-
-The application uses a modern monorepo structure with shared TypeScript types and schemas between frontend and backend, ensuring type safety across the entire stack.
+## Next Steps
+- Implement payment gateway integration (Stripe, PayPal, JazzCash)
+- Add user investment management (create, track, calculate returns)
+- Implement referral system with commissions
+- Add transaction history and wallet management
+- Multi-language support (English, Urdu)
+- Admin panel for platform management

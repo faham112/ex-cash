@@ -1,128 +1,188 @@
-import { ChartLine, Bell, User } from "lucide-react";
-import PortfolioOverview from "@/components/portfolio-overview";
-import InvestmentForm from "@/components/investment-form";
-import InvestmentList from "@/components/investment-list";
-import QuickStats from "@/components/quick-stats";
-import RecentActivity from "@/components/recent-activity";
+
+import { useEffect, useState } from "react";
+import { useLocation } from "wouter";
+import { useAuth } from "@/components/Auth/AuthProvider";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Home, User, Wallet, Settings, Menu, Activity, LogOut } from "lucide-react";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { useToast } from "@/hooks/use-toast";
 
 export default function Dashboard() {
+  const [, setLocation] = useLocation();
+  const [currentTab, setCurrentTab] = useState('home');
+  const { user, loading, signOut } = useAuth();
+  const { toast } = useToast();
+
+  useEffect(() => {
+    if (!loading && !user) {
+      setLocation("/login");
+    }
+  }, [user, loading, setLocation]);
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      toast({
+        title: "Signed out",
+        description: "You have been signed out successfully",
+      });
+      setLocation("/");
+    } catch (error) {
+      console.error("Error signing out:", error);
+      toast({
+        title: "Error",
+        description: "Failed to sign out",
+        variant: "destructive",
+      });
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-600 mx-auto"></div>
+          <p className="mt-2 text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return null; // Will redirect to login via useEffect
+  }
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
-            <div className="flex items-center">
-              <div className="flex-shrink-0 flex items-center">
-                <ChartLine className="text-brand-blue text-2xl w-8 h-8" />
-                <span className="ml-2 text-xl font-bold text-gray-900">Investro22</span>
+    <div className="flex flex-col min-h-screen bg-gradient-to-br from-orange-50 to-red-50">
+      {/* Header with Hello World */}
+      <div className="bg-white shadow-sm border-b">
+        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+          <h1 className="text-xl font-bold text-orange-600">InvestRO Dashboard</h1>
+          
+          {/* Hello World Section */}
+          <div className="text-center flex-1 mx-8">
+            <h1 className="text-4xl font-bold text-orange-600">Hello World</h1>
+            <p className="text-gray-600 mt-1">Welcome to your investment dashboard</p>
+          </div>
+          
+          <Button onClick={handleSignOut} variant="outline" size="sm">
+            <LogOut className="h-4 w-4 mr-2" />
+            Sign Out
+          </Button>
+        </div>
+      </div>
+
+      <div className="container mx-auto p-4 flex-grow">
+        {/* Welcome Card */}
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle className="text-2xl text-orange-600">
+              Welcome back, {user.email}!
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="bg-gradient-to-r from-green-100 to-green-200 p-4 rounded-lg">
+                <h3 className="font-semibold text-green-800">Total Balance</h3>
+                <p className="text-2xl font-bold text-green-600">PKR 0.00</p>
+              </div>
+              <div className="bg-gradient-to-r from-blue-100 to-blue-200 p-4 rounded-lg">
+                <h3 className="font-semibold text-blue-800">Active Investments</h3>
+                <p className="text-2xl font-bold text-blue-600">0</p>
+              </div>
+              <div className="bg-gradient-to-r from-purple-100 to-purple-200 p-4 rounded-lg">
+                <h3 className="font-semibold text-purple-800">Total Earnings</h3>
+                <p className="text-2xl font-bold text-purple-600">PKR 0.00</p>
               </div>
             </div>
-            
-            {/* Hello World Section */}
-            <div className="text-center flex-1 mx-8">
-              <h1 className="text-4xl font-bold text-brand-blue">Hello World</h1>
-              <p className="text-gray-600 mt-1">Welcome to your investment dashboard</p>
+          </CardContent>
+        </Card>
+
+        {/* Quick Actions */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Quick Actions</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <Button className="h-16 flex flex-col">
+                <Wallet className="h-5 w-5 mb-1" />
+                <span className="text-sm">Deposit</span>
+              </Button>
+              <Button variant="outline" className="h-16 flex flex-col">
+                <Activity className="h-5 w-5 mb-1" />
+                <span className="text-sm">Invest</span>
+              </Button>
+              <Button variant="outline" className="h-16 flex flex-col">
+                <User className="h-5 w-5 mb-1" />
+                <span className="text-sm">Profile</span>
+              </Button>
+              <Button variant="outline" className="h-16 flex flex-col">
+                <Settings className="h-5 w-5 mb-1" />
+                <span className="text-sm">Settings</span>
+              </Button>
             </div>
-            
-            <div className="flex items-center space-x-4">
-              <button className="text-gray-500 hover:text-gray-700">
-                <Bell className="w-5 h-5" />
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Bottom Navigation */}
+      <div className="fixed bottom-0 left-0 right-0 bg-background border-t border-border">
+        <div className="flex justify-between items-center px-4 py-2">
+          <button 
+            onClick={() => setCurrentTab('home')}
+            className={`flex flex-col items-center p-2 ${currentTab === 'home' ? 'text-primary' : 'text-muted-foreground'}`}
+          >
+            <Home size={24} />
+            <span className="text-xs">Home</span>
+          </button>
+          
+          <button 
+            onClick={() => setCurrentTab('activity')}
+            className={`flex flex-col items-center p-2 ${currentTab === 'activity' ? 'text-primary' : 'text-muted-foreground'}`}
+          >
+            <Activity size={24} />
+            <span className="text-xs">Activity</span>
+          </button>
+          
+          <button 
+            onClick={() => setCurrentTab('wallet')}
+            className={`flex flex-col items-center p-2 ${currentTab === 'wallet' ? 'text-primary' : 'text-muted-foreground'}`}
+          >
+            <Wallet size={24} />
+            <span className="text-xs">Wallet</span>
+          </button>
+          
+          <button 
+            onClick={() => setCurrentTab('profile')}
+            className={`flex flex-col items-center p-2 ${currentTab === 'profile' ? 'text-primary' : 'text-muted-foreground'}`}
+          >
+            <User size={24} />
+            <span className="text-xs">Profile</span>
+          </button>
+          
+          <Sheet>
+            <SheetTrigger asChild>
+              <button className="flex flex-col items-center p-2 text-muted-foreground">
+                <Menu size={24} />
+                <span className="text-xs">Menu</span>
               </button>
-              <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-brand-blue rounded-full flex items-center justify-center">
-                  <User className="text-white w-4 h-4" />
-                </div>
-                <span className="text-gray-700 font-medium hidden sm:block">John Doe</span>
+            </SheetTrigger>
+            <SheetContent>
+              <div className="flex flex-col gap-4 pt-10">
+                <Button variant="ghost" className="justify-start" onClick={() => setCurrentTab('settings')}>
+                  <Settings className="mr-2" size={18} />
+                  Settings
+                </Button>
+                <Button variant="ghost" className="justify-start" onClick={handleSignOut}>
+                  Sign Out
+                </Button>
               </div>
-            </div>
-          </div>
+            </SheetContent>
+          </Sheet>
         </div>
-      </header>
-
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Portfolio Overview */}
-        <PortfolioOverview />
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Investment Form and Quick Stats */}
-          <div className="lg:col-span-1 space-y-6">
-            <InvestmentForm />
-            <QuickStats />
-          </div>
-
-          {/* Investment List */}
-          <div className="lg:col-span-2">
-            <InvestmentList />
-          </div>
-        </div>
-
-        {/* Data Visualization Placeholder */}
-        <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">Portfolio Performance</h3>
-              <div className="flex space-x-2">
-                <button className="text-sm text-brand-blue hover:text-blue-700 font-medium">1M</button>
-                <button className="text-sm text-brand-blue hover:text-blue-700 font-medium">3M</button>
-                <button className="text-sm text-brand-blue hover:text-blue-700 font-medium border-b-2 border-brand-blue">6M</button>
-                <button className="text-sm text-brand-blue hover:text-blue-700 font-medium">1Y</button>
-              </div>
-            </div>
-            <div className="h-64 bg-gray-50 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-300">
-              <div className="text-center">
-                <ChartLine className="w-12 h-12 text-gray-400 mx-auto mb-2" />
-                <p className="text-gray-500">Performance Chart</p>
-                <p className="text-sm text-gray-400">Chart visualization coming soon</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Asset Allocation</h3>
-            <div className="h-64 bg-gray-50 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-300 mb-4">
-              <div className="text-center">
-                <ChartLine className="w-12 h-12 text-gray-400 mx-auto mb-2" />
-                <p className="text-gray-500">Asset Allocation Chart</p>
-                <p className="text-sm text-gray-400">Pie chart visualization coming soon</p>
-              </div>
-            </div>
-            <div className="space-y-3">
-              <div className="flex justify-between items-center">
-                <div className="flex items-center">
-                  <div className="w-3 h-3 bg-brand-blue rounded-full mr-2"></div>
-                  <span className="text-sm text-gray-600">Technology</span>
-                </div>
-                <span className="text-sm font-medium text-gray-900">45%</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <div className="flex items-center">
-                  <div className="w-3 h-3 bg-brand-green rounded-full mr-2"></div>
-                  <span className="text-sm text-gray-600">Healthcare</span>
-                </div>
-                <span className="text-sm font-medium text-gray-900">25%</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <div className="flex items-center">
-                  <div className="w-3 h-3 bg-brand-amber rounded-full mr-2"></div>
-                  <span className="text-sm text-gray-600">Finance</span>
-                </div>
-                <span className="text-sm font-medium text-gray-900">20%</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <div className="flex items-center">
-                  <div className="w-3 h-3 bg-gray-400 rounded-full mr-2"></div>
-                  <span className="text-sm text-gray-600">Other</span>
-                </div>
-                <span className="text-sm font-medium text-gray-900">10%</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Recent Activity */}
-        <RecentActivity />
-      </main>
+      </div>
     </div>
   );
 }

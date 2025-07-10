@@ -1,84 +1,145 @@
+
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertInvestmentSchema, updateInvestmentSchema } from "@shared/schema";
-import { z } from "zod";
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Get all investments
-  app.get("/api/investments", async (req, res) => {
+  app.get('/api/stats', async (req, res) => {
     try {
-      const investments = await storage.getAllInvestments();
-      res.json(investments);
+      const stats = await storage.getStats();
+      res.json(stats);
     } catch (error) {
-      res.status(500).json({ message: "Failed to fetch investments" });
+      res.status(500).json({ error: 'Failed to fetch stats' });
     }
   });
 
-  // Get single investment
-  app.get("/api/investments/:id", async (req, res) => {
+  app.get('/api/plans', async (req, res) => {
     try {
-      const id = parseInt(req.params.id);
-      const investment = await storage.getInvestment(id);
+      const plans = await storage.getPlans();
+      res.json(plans);
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to fetch plans' });
+    }
+  });
+
+  app.post('/api/calculate', async (req, res) => {
+    try {
+      const { amount, planId } = req.body;
       
-      if (!investment) {
-        return res.status(404).json({ message: "Investment not found" });
+      if (!amount || !planId) {
+        return res.status(400).json({ error: 'Amount and plan ID are required' });
       }
       
-      res.json(investment);
+      const result = await storage.calculateReturns(parseFloat(amount), planId);
+      if (!result) {
+        return res.status(404).json({ error: 'Plan not found' });
+      }
+      
+      res.json(result);
     } catch (error) {
-      res.status(500).json({ message: "Failed to fetch investment" });
+      console.error('Error calculating returns:', error);
+      res.status(500).json({ error: 'Failed to calculate returns' });
     }
   });
 
-  // Create new investment
-  app.post("/api/investments", async (req, res) => {
+  // User management routes
+  app.get('/api/users/:id', async (req, res) => {
     try {
-      const validatedData = insertInvestmentSchema.parse(req.body);
-      const investment = await storage.createInvestment(validatedData);
+      const user = await storage.getUser(req.params.id);
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+      res.json(user);
+    } catch (error) {
+      console.error('Error fetching user:', error);
+      res.status(500).json({ error: 'Failed to fetch user' });
+    }
+  });
+
+  app.put('/api/users/:id', async (req, res) => {
+    try {
+      const user = await storage.updateUser(req.params.id, req.body);
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+      res.json(user);
+    } catch (error) {
+      console.error('Error updating user:', error);
+      res.status(500).json({ error: 'Failed to update user' });
+    }
+  });
+
+  app.get('/api/users/:id/stats', async (req, res) => {
+    try {
+      const stats = await storage.getUserStats(req.params.id);
+      res.json(stats);
+    } catch (error) {
+      console.error('Error fetching user stats:', error);
+      res.status(500).json({ error: 'Failed to fetch user stats' });
+    }
+  });
+
+  // Investment routes
+  app.post('/api/investments', async (req, res) => {
+    try {
+      const investment = await storage.createInvestment(req.body);
       res.status(201).json(investment);
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        return res.status(400).json({ message: "Invalid investment data", errors: error.errors });
-      }
-      res.status(500).json({ message: "Failed to create investment" });
+      console.error('Error creating investment:', error);
+      res.status(500).json({ error: 'Failed to create investment' });
     }
   });
 
-  // Update investment
-  app.put("/api/investments/:id", async (req, res) => {
+  app.get('/api/users/:userId/investments', async (req, res) => {
     try {
-      const id = parseInt(req.params.id);
-      const validatedData = updateInvestmentSchema.partial().parse(req.body);
-      
-      const investment = await storage.updateInvestment(id, validatedData);
-      
-      if (!investment) {
-        return res.status(404).json({ message: "Investment not found" });
-      }
-      
-      res.json(investment);
+      const investments = await storage.getUserInvestments(req.params.userId);
+      res.json(investments);
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        return res.status(400).json({ message: "Invalid investment data", errors: error.errors });
-      }
-      res.status(500).json({ message: "Failed to update investment" });
+      console.error('Error fetching user investments:', error);
+      res.status(500).json({ error: 'Failed to fetch investments' });
     }
   });
 
-  // Delete investment
-  app.delete("/api/investments/:id", async (req, res) => {
+  // Transaction routes
+  app.post('/api/transactions', async (req, res) => {
     try {
-      const id = parseInt(req.params.id);
-      const success = await storage.deleteInvestment(id);
-      
-      if (!success) {
-        return res.status(404).json({ message: "Investment not found" });
-      }
-      
-      res.json({ message: "Investment deleted successfully" });
+      const transaction = await storage.createTransaction(req.body);
+      res.status(201).json(transaction);
     } catch (error) {
-      res.status(500).json({ message: "Failed to delete investment" });
+      console.error('Error creating transaction:', error);
+      res.status(500).json({ error: 'Failed to create transaction' });
+    }
+  });
+
+  app.get('/api/users/:userId/transactions', async (req, res) => {
+    try {
+      const transactions = await storage.getUserTransactions(req.params.userId);
+      res.json(transactions);
+    } catch (error) {
+      console.error('Error fetching user transactions:', error);
+      res.status(500).json({ error: 'Failed to fetch transactions' });
+    }
+  });
+
+  // Referral routes
+  app.post('/api/referrals', async (req, res) => {
+    try {
+      const { referrerId, referredId } = req.body;
+      const referral = await storage.createReferral(referrerId, referredId);
+      res.status(201).json(referral);
+    } catch (error) {
+      console.error('Error creating referral:', error);
+      res.status(500).json({ error: 'Failed to create referral' });
+    }
+  });
+
+  app.get('/api/users/:userId/referrals', async (req, res) => {
+    try {
+      const referrals = await storage.getUserReferrals(req.params.userId);
+      res.json(referrals);
+    } catch (error) {
+      console.error('Error fetching user referrals:', error);
+      res.status(500).json({ error: 'Failed to fetch referrals' });
     }
   });
 
