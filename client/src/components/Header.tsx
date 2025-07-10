@@ -15,7 +15,7 @@ export default function Header() {
       <div className="container mx-auto px-4 flex justify-between items-center">
         <div className="flex items-center">
           <Link href="/" className="text-2xl font-bold">
-            <span className="text-black dark:text-white">Invest</span><span className="text-blue-600">RO</span>
+            <span className="text-black dark:text-white">Invest</span><span className="text-[#fac219]">RO</span>
           </Link>
         </div>
         
@@ -61,7 +61,6 @@ export default function Header() {
           </button>
         </div>
       </div>
-
       {/* Mobile menu */}
       {isMenuOpen && (
         <div className="md:hidden bg-white border-t border-slate-200 mt-4 dark:bg-muted dark:border-border">
