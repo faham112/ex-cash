@@ -79,7 +79,7 @@ export default function Header() {
           {/* Mobile Login Button */}
           <Link href="/login" className="md:hidden">
             <Button variant="outline" size="sm" className="flex items-center gap-2">
-              <User className="h-4 w-4" />
+              <User className="h-4 w-4" /> Login
             </Button>
           </Link>
           
