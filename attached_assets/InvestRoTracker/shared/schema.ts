@@ -1,14 +1,13 @@
-import { pgTable, text, uuid, serial, integer, boolean, numeric, decimal, date, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, text, uuid, integer, boolean, numeric, timestamp } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
-// Enhanced Users table with more fields for comprehensive user management
+// Users
 export const users = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),
   auth_id: uuid("auth_id"),
   username: text("username").notNull().unique(),
   email: text("email").notNull().unique(),
-  password: text("password"), // Optional for OAuth users
   full_name: text("full_name"),
   balance: numeric("balance").notNull().default("0"),
   phone: text("phone"),
@@ -23,14 +22,13 @@ export const users = pgTable("users", {
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
   email: true,
-  password: true,
   full_name: true,
   phone: true,
   referral_code: true,
   referred_by: true
 });
 
-// Investment Plans - for different investment strategies
+// Plans
 export const plans = pgTable("plans", {
   id: uuid("id").primaryKey().defaultRandom(),
   name: text("name").notNull(),
@@ -61,59 +59,28 @@ export const insertPlanSchema = createInsertSchema(plans).pick({
   features: true
 });
 
-// Enhanced Investments table - combining both approaches
+// Investments
 export const investments = pgTable("investments", {
   id: uuid("id").primaryKey().defaultRandom(),
-  user_id: uuid("user_id"),
-  plan_id: uuid("plan_id"),
-  
-  // Stock tracking fields (from original)
-  symbol: text("symbol"),
-  companyName: text("company_name"),
-  shares: integer("shares"),
-  purchasePrice: decimal("purchase_price", { precision: 10, scale: 2 }),
-  currentPrice: decimal("current_price", { precision: 10, scale: 2 }),
-  purchaseDate: date("purchase_date"),
-  
-  // Investment plan fields (from your project)
-  amount: numeric("amount"),
+  user_id: uuid("user_id").notNull(),
+  plan_id: uuid("plan_id").notNull(),
+  amount: numeric("amount").notNull(),
   status: text("status").notNull().default("active"),
   start_date: timestamp("start_date").defaultNow(),
   end_date: timestamp("end_date"),
   total_return: numeric("total_return"),
   daily_profit: numeric("daily_profit"),
   last_profit_date: timestamp("last_profit_date"),
-  
   created_at: timestamp("created_at").defaultNow(),
   updated_at: timestamp("updated_at").defaultNow()
 });
 
-// Schema for stock investments
-export const insertStockInvestmentSchema = createInsertSchema(investments).pick({
-  user_id: true,
-  symbol: true,
-  companyName: true,
-  shares: true,
-  purchasePrice: true,
-  currentPrice: true,
-  purchaseDate: true
-});
-
-// Schema for plan investments
-export const insertPlanInvestmentSchema = createInsertSchema(investments).pick({
+export const insertInvestmentSchema = createInsertSchema(investments).pick({
   user_id: true,
   plan_id: true,
   amount: true,
   start_date: true
 });
-
-export const updateInvestmentSchema = createInsertSchema(investments).omit({
-  id: true,
-  created_at: true,
-  updated_at: true
-}).extend({
-  currentPrice: z.string().regex(/^\d+(\.\d{1,2})?$/, "Must be a valid price").optional(),
-}).partial();
 
 // Transactions
 export const transactions = pgTable("transactions", {
@@ -156,17 +123,14 @@ export const insertReferralSchema = createInsertSchema(referrals).pick({
   commission_rate: true
 });
 
-// Export types
+// Types
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
 
 export type InsertPlan = z.infer<typeof insertPlanSchema>;
 export type Plan = typeof plans.$inferSelect;
 
-export type InsertStockInvestment = z.infer<typeof insertStockInvestmentSchema>;
-export type InsertPlanInvestment = z.infer<typeof insertPlanInvestmentSchema>;
-export type InsertInvestment = InsertStockInvestment | InsertPlanInvestment;
-export type UpdateInvestment = z.infer<typeof updateInvestmentSchema>;
+export type InsertInvestment = z.infer<typeof insertInvestmentSchema>;
 export type Investment = typeof investments.$inferSelect;
 
 export type InsertTransaction = z.infer<typeof insertTransactionSchema>;
@@ -175,7 +139,7 @@ export type Transaction = typeof transactions.$inferSelect;
 export type InsertReferral = z.infer<typeof insertReferralSchema>;
 export type Referral = typeof referrals.$inferSelect;
 
-// Statistics interfaces
+// Statistics
 export interface PlatformStats {
   totalInvestments: number;
   activeInvestors: number;
@@ -183,6 +147,7 @@ export interface PlatformStats {
   maxRoi: number;
 }
 
+// Return calculation
 export interface ReturnCalculation {
   dailyProfit: number;
   weeklyProfit: number;
