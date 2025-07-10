@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Menu, X, User } from "lucide-react";
+import { Menu, X, User, Sun, Moon } from "lucide-react";
+import { useTheme } from "../contexts/ThemeContext";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { theme, toggleTheme } = useTheme();
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
@@ -35,14 +37,23 @@ export default function Header() {
           </Link>
         </nav>
 
-        <div className="flex items-center">
+        <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={toggleTheme}
+            className="p-2"
+            aria-label="Toggle theme"
+          >
+            {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+          </Button>
           <Link href="/login">
             <Button variant="outline" size="sm" className="flex items-center gap-2">
               <User className="h-4 w-4" /> Login
             </Button>
           </Link>
           <button 
-            className="md:hidden ml-4 text-gray-400 hover:text-white"
+            className="md:hidden ml-2 text-gray-400 hover:text-white"
             onClick={toggleMenu}
             aria-label="Toggle menu"
           >

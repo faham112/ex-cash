@@ -3,6 +3,29 @@
 @tailwind utilities;
 
 :root {
+  --background: 0 0% 100%;
+  --foreground: 222 84% 4.9%;
+  --muted: 210 40% 98%;
+  --muted-foreground: 215.4 16.3% 46.9%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 222 84% 4.9%;
+  --card: 0 0% 100%;
+  --card-foreground: 222 84% 4.9%;
+  --border: 214.3 31.8% 91.4%;
+  --input: 214.3 31.8% 91.4%;
+  --primary: 45 96% 54%;
+  --primary-foreground: 222 47% 11%;
+  --secondary: 210 40% 98%;
+  --secondary-foreground: 222 84% 4.9%;
+  --accent: 210 40% 98%;
+  --accent-foreground: 222 84% 4.9%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 0 0% 98%;
+  --ring: 214.3 31.8% 91.4%;
+  --radius: 0.5rem;
+}
+
+.dark {
   --background: 222 47% 11%;
   --foreground: 0 0% 98%;
   --muted: 223 47% 14%;
@@ -22,7 +45,6 @@
   --destructive: 0 62.8% 30.6%;
   --destructive-foreground: 0 0% 98%;
   --ring: 223 47% 18%;
-  --radius: 0.5rem;
 }
 
 @layer base {
@@ -41,10 +63,18 @@
 
 /* Custom classes */
 .gradient-bg {
-  background-image: radial-gradient(circle at 10% 20%, rgba(26, 34, 53, 1) 0%, rgba(18, 25, 39, 1) 90%);
+  background-image: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(147, 51, 234, 0.1) 100%);
 }
 
 .gradient-bg-alt {
+  background-image: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(147, 51, 234, 0.05) 100%);
+}
+
+.dark .gradient-bg {
+  background-image: radial-gradient(circle at 10% 20%, rgba(26, 34, 53, 1) 0%, rgba(18, 25, 39, 1) 90%);
+}
+
+.dark .gradient-bg-alt {
   background-image: radial-gradient(circle at 90% 90%, rgba(26, 34, 53, 0.8) 0%, rgba(18, 25, 39, 0.8) 90%);
 }
 
@@ -61,7 +91,7 @@
 }
 
 .stat-card {
-  @apply bg-muted bg-opacity-50 rounded-2xl shadow-xl p-8 border border-muted;
+  @apply bg-white bg-opacity-80 rounded-2xl shadow-lg p-8 border border-gray-200 dark:bg-muted dark:bg-opacity-50 dark:shadow-xl dark:border-muted;
 }
 
 .feature-card {

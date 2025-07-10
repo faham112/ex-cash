@@ -15,6 +15,7 @@ High-Yield Investment Program (HYIP) web application for investRO.online featuri
 - **2025-01-10**: Fixed authentication flow issues: disabled email verification for easier registration and corrected login redirect to dashboard
 - **2025-01-10**: Updated all components from Firebase to Supabase authentication system with proper state management
 - **2025-01-10**: Implemented newsletter subscription functionality with database integration
+- **2025-01-10**: Added dark/light theme switcher with ThemeContext and toggle button in header
 
 ## Project Architecture
 - **Frontend**: React with TypeScript, Tailwind CSS, shadcn/ui components
