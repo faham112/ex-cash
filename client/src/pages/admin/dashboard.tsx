@@ -71,6 +71,15 @@ export default function AdminDashboard() {
   const [selectedUser, setSelectedUser] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('overview');
+  const [bankAccounts, setBankAccounts] = useState([]);
+  const [depositRequests, setDepositRequests] = useState([]);
+  const [isAddBankDialogOpen, setIsAddBankDialogOpen] = useState(false);
+  const [newBankAccount, setNewBankAccount] = useState({
+    bank_name: '',
+    account_holder: '',
+    account_number: '',
+    status: 'active'
+  });
 
   useEffect(() => {
     // Check admin authentication
@@ -80,6 +89,8 @@ export default function AdminDashboard() {
     if (adminAuth === 'true' && adminUsername) {
       setIsAuthenticated(true);
       setAdminUser(adminUsername);
+      fetchBankAccounts();
+      fetchDepositRequests();
     } else {
       setLocation('/admin/login');
     }
@@ -89,6 +100,92 @@ export default function AdminDashboard() {
     localStorage.removeItem('adminAuth');
     localStorage.removeItem('adminUser');
     setLocation('/admin/login');
+  };
+
+  const fetchBankAccounts = async () => {
+    try {
+      const response = await fetch('/api/admin/bank-accounts');
+      if (response.ok) {
+        const accounts = await response.json();
+        setBankAccounts(accounts);
+      }
+    } catch (error) {
+      console.error('Error fetching bank accounts:', error);
+    }
+  };
+
+  const fetchDepositRequests = async () => {
+    try {
+      const response = await fetch('/api/admin/deposit-requests');
+      if (response.ok) {
+        const requests = await response.json();
+        setDepositRequests(requests);
+      }
+    } catch (error) {
+      console.error('Error fetching deposit requests:', error);
+    }
+  };
+
+  const handleAddBankAccount = async () => {
+    try {
+      const response = await fetch('/api/admin/bank-accounts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newBankAccount),
+      });
+
+      if (response.ok) {
+        const account = await response.json();
+        setBankAccounts(prev => [...prev, account]);
+        setNewBankAccount({
+          bank_name: '',
+          account_holder: '',
+          account_number: '',
+          status: 'active'
+        });
+        setIsAddBankDialogOpen(false);
+      }
+    } catch (error) {
+      console.error('Error adding bank account:', error);
+    }
+  };
+
+  const handleApproveDeposit = async (requestId, adminNotes = '') => {
+    try {
+      const response = await fetch(`/api/admin/deposit-requests/${requestId}/approve`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ adminNotes }),
+      });
+
+      if (response.ok) {
+        fetchDepositRequests();
+      }
+    } catch (error) {
+      console.error('Error approving deposit:', error);
+    }
+  };
+
+  const handleRejectDeposit = async (requestId, adminNotes = '') => {
+    try {
+      const response = await fetch(`/api/admin/deposit-requests/${requestId}/reject`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ adminNotes }),
+      });
+
+      if (response.ok) {
+        fetchDepositRequests();
+      }
+    } catch (error) {
+      console.error('Error rejecting deposit:', error);
+    }
   };
 
   if (!isAuthenticated) {
@@ -320,14 +417,15 @@ export default function AdminDashboard() {
 
         {/* Main Content */}
         <Tabs defaultValue="overview" className="space-y-4">
-          <TabsList className="grid w-full grid-cols-7">
+          <TabsList className="grid w-full grid-cols-8">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="users">Users</TabsTrigger>
             <TabsTrigger value="investments">Investments</TabsTrigger>
             <TabsTrigger value="transactions">Transactions</TabsTrigger>
+            <TabsTrigger value="deposits">Deposits</TabsTrigger>
+            <TabsTrigger value="banks">Bank Accounts</TabsTrigger>
             <TabsTrigger value="newsletter">Newsletter</TabsTrigger>
             <TabsTrigger value="analytics">Analytics</TabsTrigger>
-            <TabsTrigger value="settings">Settings</TabsTrigger>
           </TabsList>
 
           {/* Overview Tab */}
@@ -726,6 +824,287 @@ export default function AdminDashboard() {
                       <Badge className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100">Pending</Badge>
                       <p className="text-sm text-muted-foreground">1 day ago</p>
                     </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Deposits Tab */}
+          <TabsContent value="deposits" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="flex items-center gap-2">
+                    <CreditCard className="h-5 w-5" />
+                    Deposit Requests
+                  </CardTitle>
+                  <Button variant="outline" size="sm" onClick={fetchDepositRequests}>
+                    <RefreshCw className="h-4 w-4 mr-2" />
+                    Refresh
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {/* Deposit Requests Table */}
+                  <div className="border rounded-lg">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>User</TableHead>
+                          <TableHead>Amount</TableHead>
+                          <TableHead>Bank Details</TableHead>
+                          <TableHead>Payment Method</TableHead>
+                          <TableHead>Transaction ID</TableHead>
+                          <TableHead>Status</TableHead>
+                          <TableHead>Date</TableHead>
+                          <TableHead>Actions</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {depositRequests.map((request) => (
+                          <TableRow key={request.id}>
+                            <TableCell>
+                              <div>
+                                <p className="font-medium">{request.user_email}</p>
+                                <p className="text-sm text-muted-foreground">{request.user_name}</p>
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <p className="font-medium">PKR {parseFloat(request.amount).toLocaleString()}</p>
+                            </TableCell>
+                            <TableCell>
+                              <div>
+                                <p className="font-medium">{request.bank_name}</p>
+                                <p className="text-sm text-muted-foreground">{request.account_holder}</p>
+                                <p className="text-sm text-muted-foreground">{request.account_number}</p>
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <Badge variant="outline">{request.payment_method}</Badge>
+                            </TableCell>
+                            <TableCell>
+                              <p className="text-sm">{request.transaction_id || 'N/A'}</p>
+                            </TableCell>
+                            <TableCell>
+                              <Badge 
+                                className={
+                                  request.status === 'approved' 
+                                    ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100'
+                                    : request.status === 'rejected'
+                                    ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-100'
+                                    : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100'
+                                }
+                              >
+                                {request.status}
+                              </Badge>
+                            </TableCell>
+                            <TableCell>
+                              <div>
+                                <p className="text-sm">{new Date(request.created_at).toLocaleDateString()}</p>
+                                <p className="text-xs text-muted-foreground">{new Date(request.created_at).toLocaleTimeString()}</p>
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              {request.status === 'pending' && (
+                                <div className="flex items-center space-x-2">
+                                  <Button 
+                                    size="sm" 
+                                    onClick={() => handleApproveDeposit(request.id, 'Payment verified and approved')}
+                                    className="bg-green-600 hover:bg-green-700"
+                                  >
+                                    <Check className="h-4 w-4" />
+                                  </Button>
+                                  <Button 
+                                    size="sm" 
+                                    variant="destructive"
+                                    onClick={() => handleRejectDeposit(request.id, 'Payment not verified')}
+                                  >
+                                    <X className="h-4 w-4" />
+                                  </Button>
+                                </div>
+                              )}
+                              {request.status !== 'pending' && (
+                                <div className="text-sm text-muted-foreground">
+                                  {request.admin_notes && (
+                                    <p>Notes: {request.admin_notes}</p>
+                                  )}
+                                  {request.processed_at && (
+                                    <p>Processed: {new Date(request.processed_at).toLocaleDateString()}</p>
+                                  )}
+                                </div>
+                              )}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                        {depositRequests.length === 0 && (
+                          <TableRow>
+                            <TableCell colSpan={8} className="text-center text-muted-foreground">
+                              No deposit requests found
+                            </TableCell>
+                          </TableRow>
+                        )}
+                      </TableBody>
+                    </Table>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Bank Accounts Tab */}
+          <TabsContent value="banks" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="flex items-center gap-2">
+                    <CreditCard className="h-5 w-5" />
+                    Bank Account Management
+                  </CardTitle>
+                  <div className="flex items-center space-x-2">
+                    <Dialog open={isAddBankDialogOpen} onOpenChange={setIsAddBankDialogOpen}>
+                      <DialogTrigger asChild>
+                        <Button size="sm">
+                          <Plus className="h-4 w-4 mr-2" />
+                          Add Account
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>Add New Bank Account</DialogTitle>
+                        </DialogHeader>
+                        <div className="space-y-4">
+                          <div>
+                            <Label htmlFor="bank-name">Bank Name</Label>
+                            <Input
+                              id="bank-name"
+                              value={newBankAccount.bank_name}
+                              onChange={(e) => setNewBankAccount(prev => ({ ...prev, bank_name: e.target.value }))}
+                              placeholder="Enter bank name"
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="account-holder">Account Holder Name</Label>
+                            <Input
+                              id="account-holder"
+                              value={newBankAccount.account_holder}
+                              onChange={(e) => setNewBankAccount(prev => ({ ...prev, account_holder: e.target.value }))}
+                              placeholder="Enter account holder name"
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="account-number">Account Number</Label>
+                            <Input
+                              id="account-number"
+                              value={newBankAccount.account_number}
+                              onChange={(e) => setNewBankAccount(prev => ({ ...prev, account_number: e.target.value }))}
+                              placeholder="Enter account number"
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="status">Status</Label>
+                            <Select 
+                              value={newBankAccount.status} 
+                              onValueChange={(value) => setNewBankAccount(prev => ({ ...prev, status: value }))}
+                            >
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select status" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="active">Active</SelectItem>
+                                <SelectItem value="inactive">Inactive</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div className="flex justify-end space-x-2">
+                            <Button variant="outline" onClick={() => setIsAddBankDialogOpen(false)}>
+                              Cancel
+                            </Button>
+                            <Button onClick={handleAddBankAccount}>
+                              Add Account
+                            </Button>
+                          </div>
+                        </div>
+                      </DialogContent>
+                    </Dialog>
+                    <Button variant="outline" size="sm" onClick={fetchBankAccounts}>
+                      <RefreshCw className="h-4 w-4 mr-2" />
+                      Refresh
+                    </Button>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {/* Bank Accounts Table */}
+                  <div className="border rounded-lg">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Bank Name</TableHead>
+                          <TableHead>Account Holder</TableHead>
+                          <TableHead>Account Number</TableHead>
+                          <TableHead>Status</TableHead>
+                          <TableHead>Created</TableHead>
+                          <TableHead>Actions</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {bankAccounts.map((account) => (
+                          <TableRow key={account.id}>
+                            <TableCell>
+                              <div className="flex items-center space-x-3">
+                                <div className="bg-blue-100 dark:bg-blue-900 p-2 rounded-full">
+                                  <CreditCard className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                                </div>
+                                <p className="font-medium">{account.bank_name}</p>
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <p className="font-medium">{account.account_holder}</p>
+                            </TableCell>
+                            <TableCell>
+                              <p className="font-mono text-sm">{account.account_number}</p>
+                            </TableCell>
+                            <TableCell>
+                              <Badge 
+                                className={
+                                  account.status === 'active' 
+                                    ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100'
+                                    : 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-100'
+                                }
+                              >
+                                {account.status}
+                              </Badge>
+                            </TableCell>
+                            <TableCell>
+                              <div>
+                                <p className="text-sm">{new Date(account.created_at).toLocaleDateString()}</p>
+                                <p className="text-xs text-muted-foreground">{new Date(account.created_at).toLocaleTimeString()}</p>
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex items-center space-x-2">
+                                <Button variant="outline" size="sm">
+                                  <Edit className="h-4 w-4" />
+                                </Button>
+                                <Button variant="outline" size="sm">
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                        {bankAccounts.length === 0 && (
+                          <TableRow>
+                            <TableCell colSpan={6} className="text-center text-muted-foreground">
+                              No bank accounts found. Add one to get started.
+                            </TableCell>
+                          </TableRow>
+                        )}
+                      </TableBody>
+                    </Table>
                   </div>
                 </div>
               </CardContent>

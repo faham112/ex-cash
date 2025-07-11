@@ -136,6 +136,49 @@ export const insertNewsletterSchema = createInsertSchema(newsletters).pick({
   email: true
 });
 
+// Bank accounts
+export const bankAccounts = pgTable("bank_accounts", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  bank_name: text("bank_name").notNull(),
+  account_holder: text("account_holder").notNull(),
+  account_number: text("account_number").notNull(),
+  status: text("status").notNull().default("active"),
+  created_at: timestamp("created_at").defaultNow(),
+  updated_at: timestamp("updated_at").defaultNow()
+});
+
+export const insertBankAccountSchema = createInsertSchema(bankAccounts).pick({
+  bank_name: true,
+  account_holder: true,
+  account_number: true,
+  status: true
+});
+
+// Deposit requests
+export const depositRequests = pgTable("deposit_requests", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  user_id: uuid("user_id").notNull(),
+  bank_account_id: uuid("bank_account_id").notNull(),
+  amount: numeric("amount").notNull(),
+  payment_method: text("payment_method").notNull(),
+  transaction_id: text("transaction_id"),
+  receipt: text("receipt"),
+  status: text("status").notNull().default("pending"),
+  admin_notes: text("admin_notes"),
+  processed_at: timestamp("processed_at"),
+  created_at: timestamp("created_at").defaultNow(),
+  updated_at: timestamp("updated_at").defaultNow()
+});
+
+export const insertDepositRequestSchema = createInsertSchema(depositRequests).pick({
+  user_id: true,
+  bank_account_id: true,
+  amount: true,
+  payment_method: true,
+  transaction_id: true,
+  receipt: true
+});
+
 // Types
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
@@ -154,6 +197,12 @@ export type Referral = typeof referrals.$inferSelect;
 
 export type InsertNewsletter = z.infer<typeof insertNewsletterSchema>;
 export type Newsletter = typeof newsletters.$inferSelect;
+
+export type InsertBankAccount = z.infer<typeof insertBankAccountSchema>;
+export type BankAccount = typeof bankAccounts.$inferSelect;
+
+export type InsertDepositRequest = z.infer<typeof insertDepositRequestSchema>;
+export type DepositRequest = typeof depositRequests.$inferSelect;
 
 // Statistics
 export interface PlatformStats {

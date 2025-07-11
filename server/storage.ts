@@ -19,30 +19,30 @@ export interface IStorage {
   getUserByAuthId(authId: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
   updateUser(id: string, user: Partial<User>): Promise<User | undefined>;
-  
+
   // Plan operations
   getPlans(): Promise<Plan[]>;
   getPlan(id: string): Promise<Plan | undefined>;
-  
+
   // Investment operations
   createInvestment(investment: InsertInvestment): Promise<Investment>;
   getUserInvestments(userId: string): Promise<Investment[]>;
   updateInvestment(id: string, investment: Partial<Investment>): Promise<Investment | undefined>;
   calculateReturns(amount: number, planId: string): Promise<ReturnCalculation | undefined>;
-  
+
   // Transaction operations
   createTransaction(transaction: any): Promise<any>;
   getUserTransactions(userId: string): Promise<any[]>;
   updateTransaction(id: string, transaction: any): Promise<any>;
-  
+
   // Referral operations
   createReferral(referrerId: string, referredId: string): Promise<any>;
   getUserReferrals(userId: string): Promise<any[]>;
-  
+
   // Statistics
   getStats(): Promise<PlatformStats>;
   getUserStats(userId: string): Promise<any>;
-  
+
   // Newsletter operations
   subscribeToNewsletter(email: string): Promise<Newsletter>;
   unsubscribeFromNewsletter(email: string): Promise<void>;
@@ -57,12 +57,12 @@ export class SupabaseStorage implements IStorage {
       .select('*')
       .eq('id', id)
       .single();
-    
+
     if (error) {
       console.error('Error fetching user:', error);
       return undefined;
     }
-    
+
     return data as User;
   }
 
@@ -72,12 +72,12 @@ export class SupabaseStorage implements IStorage {
       .select('*')
       .eq('username', username)
       .single();
-    
+
     if (error) {
       console.error('Error fetching user by username:', error);
       return undefined;
     }
-    
+
     return data as User;
   }
 
@@ -87,12 +87,12 @@ export class SupabaseStorage implements IStorage {
       .select('*')
       .eq('auth_id', authId)
       .single();
-    
+
     if (error) {
       console.error('Error fetching user by auth ID:', error);
       return undefined;
     }
-    
+
     return data as User;
   }
 
@@ -102,12 +102,12 @@ export class SupabaseStorage implements IStorage {
       .insert([insertUser])
       .select()
       .single();
-    
+
     if (error) {
       console.error('Error creating user:', error);
       throw new Error('Failed to create user');
     }
-    
+
     return data as User;
   }
 
@@ -118,12 +118,12 @@ export class SupabaseStorage implements IStorage {
       .eq('id', id)
       .select()
       .single();
-    
+
     if (error) {
       console.error('Error updating user:', error);
       return undefined;
     }
-    
+
     return data as User;
   }
 
@@ -134,12 +134,12 @@ export class SupabaseStorage implements IStorage {
       .select('*')
       .eq('active', true)
       .order('created_at');
-    
+
     if (error) {
       console.error('Error fetching plans:', error);
       return [];
     }
-    
+
     return data as Plan[];
   }
 
@@ -150,12 +150,12 @@ export class SupabaseStorage implements IStorage {
       .eq('id', id)
       .eq('active', true)
       .single();
-    
+
     if (error) {
       console.error('Error fetching plan:', error);
       return undefined;
     }
-    
+
     return data as Plan;
   }
 
@@ -166,12 +166,12 @@ export class SupabaseStorage implements IStorage {
       .insert([investment])
       .select()
       .single();
-    
+
     if (error) {
       console.error('Error creating investment:', error);
       throw new Error('Failed to create investment');
     }
-    
+
     return data as Investment;
   }
 
@@ -188,12 +188,12 @@ export class SupabaseStorage implements IStorage {
       `)
       .eq('user_id', userId)
       .order('created_at', { ascending: false });
-    
+
     if (error) {
       console.error('Error fetching user investments:', error);
       return [];
     }
-    
+
     return data as Investment[];
   }
 
@@ -204,28 +204,28 @@ export class SupabaseStorage implements IStorage {
       .eq('id', id)
       .select()
       .single();
-    
+
     if (error) {
       console.error('Error updating investment:', error);
       return undefined;
     }
-    
+
     return data as Investment;
   }
 
   async calculateReturns(amount: number, planId: string): Promise<ReturnCalculation | undefined> {
     const plan = await this.getPlan(planId);
-    
+
     if (!plan) return undefined;
-    
+
     const rate = Number(plan.roi) / 100;
     const days = plan.duration_days;
-    
+
     const dailyProfit = amount * rate;
     const weeklyProfit = dailyProfit * 7;
     const monthlyProfit = dailyProfit * 30;
     const totalReturn = (dailyProfit * days) + amount;
-    
+
     return {
       dailyProfit,
       weeklyProfit,
@@ -242,12 +242,12 @@ export class SupabaseStorage implements IStorage {
       .insert([transaction])
       .select()
       .single();
-    
+
     if (error) {
       console.error('Error creating transaction:', error);
       throw new Error('Failed to create transaction');
     }
-    
+
     return data;
   }
 
@@ -257,12 +257,12 @@ export class SupabaseStorage implements IStorage {
       .select('*')
       .eq('user_id', userId)
       .order('created_at', { ascending: false });
-    
+
     if (error) {
       console.error('Error fetching user transactions:', error);
       return [];
     }
-    
+
     return data;
   }
 
@@ -273,12 +273,12 @@ export class SupabaseStorage implements IStorage {
       .eq('id', id)
       .select()
       .single();
-    
+
     if (error) {
       console.error('Error updating transaction:', error);
       return undefined;
     }
-    
+
     return data;
   }
 
@@ -292,12 +292,12 @@ export class SupabaseStorage implements IStorage {
       }])
       .select()
       .single();
-    
+
     if (error) {
       console.error('Error creating referral:', error);
       throw new Error('Failed to create referral');
     }
-    
+
     return data;
   }
 
@@ -314,12 +314,12 @@ export class SupabaseStorage implements IStorage {
       `)
       .eq('referrer_id', userId)
       .order('created_at', { ascending: false });
-    
+
     if (error) {
       console.error('Error fetching user referrals:', error);
       return [];
     }
-    
+
     return data;
   }
 
@@ -334,7 +334,7 @@ export class SupabaseStorage implements IStorage {
       supabase.from('users').select('id').eq('status', 'active'),
       supabase.from('plans').select('roi').eq('active', true)
     ]);
-    
+
     if (investmentsError || usersError || plansError) {
       console.error('Error fetching stats:', { investmentsError, usersError, plansError });
       return {
@@ -344,11 +344,11 @@ export class SupabaseStorage implements IStorage {
         maxRoi: 5.5
       };
     }
-    
+
     const totalInvestments = investments?.reduce((sum, inv) => sum + Number(inv.amount), 0) || 10000000;
     const activeInvestors = users?.length || 50000;
     const maxRoi = plans?.reduce((max, plan) => Math.max(max, Number(plan.roi)), 0) || 5.5;
-    
+
     return {
       totalInvestments,
       activeInvestors,
@@ -367,7 +367,7 @@ export class SupabaseStorage implements IStorage {
       supabase.from('transactions').select('*').eq('user_id', userId),
       supabase.from('referrals').select('*').eq('referrer_id', userId)
     ]);
-    
+
     if (investmentsError || transactionsError || referralsError) {
       console.error('Error fetching user stats:', { investmentsError, transactionsError, referralsError });
       return {
@@ -377,12 +377,12 @@ export class SupabaseStorage implements IStorage {
         totalReferrals: 0
       };
     }
-    
+
     const totalInvestments = investments?.reduce((sum, inv) => sum + Number(inv.amount), 0) || 0;
     const activeInvestments = investments?.filter(inv => inv.status === 'active').length || 0;
     const totalEarnings = transactions?.filter(t => t.type === 'profit').reduce((sum, t) => sum + Number(t.amount), 0) || 0;
     const totalReferrals = referrals?.length || 0;
-    
+
     return {
       totalInvestments,
       activeInvestments,
@@ -398,12 +398,12 @@ export class SupabaseStorage implements IStorage {
       .insert([{ email }])
       .select()
       .single();
-    
+
     if (error) {
       console.error('Error subscribing to newsletter:', error);
       throw new Error('Failed to subscribe to newsletter');
     }
-    
+
     return data as Newsletter;
   }
 
@@ -415,7 +415,7 @@ export class SupabaseStorage implements IStorage {
         unsubscribed_at: new Date().toISOString()
       })
       .eq('email', email);
-    
+
     if (error) {
       console.error('Error unsubscribing from newsletter:', error);
       throw new Error('Failed to unsubscribe from newsletter');
@@ -428,12 +428,12 @@ export class SupabaseStorage implements IStorage {
       .select('*')
       .eq('status', 'active')
       .order('subscribed_at', { ascending: false });
-    
+
     if (error) {
       console.error('Error fetching newsletter subscriptions:', error);
       return [];
     }
-    
+
     return data as Newsletter[];
   }
 }

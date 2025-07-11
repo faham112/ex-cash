@@ -172,6 +172,153 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Bank account management routes
+  app.get('/api/admin/bank-accounts', async (req, res) => {
+    try {
+      const accounts = await storage.getBankAccounts();
+      res.json(accounts);
+    } catch (error) {
+      console.error('Error fetching bank accounts:', error);
+      res.status(500).json({ error: 'Failed to fetch bank accounts' });
+    }
+  });
+
+  app.post('/api/admin/bank-accounts', async (req, res) => {
+    try {
+      const { bankName, accountHolder, accountNumber, status } = req.body;
+      
+      if (!bankName || !accountHolder || !accountNumber) {
+        return res.status(400).json({ error: 'All fields are required' });
+      }
+      
+      const account = await storage.createBankAccount({
+        bankName,
+        accountHolder,
+        accountNumber,
+        status: status || 'active'
+      });
+      
+      res.status(201).json(account);
+    } catch (error) {
+      console.error('Error creating bank account:', error);
+      res.status(500).json({ error: 'Failed to create bank account' });
+    }
+  });
+
+  app.put('/api/admin/bank-accounts/:id', async (req, res) => {
+    try {
+      const { id } = req.params;
+      const updates = req.body;
+      
+      const account = await storage.updateBankAccount(id, updates);
+      if (!account) {
+        return res.status(404).json({ error: 'Bank account not found' });
+      }
+      
+      res.json(account);
+    } catch (error) {
+      console.error('Error updating bank account:', error);
+      res.status(500).json({ error: 'Failed to update bank account' });
+    }
+  });
+
+  app.delete('/api/admin/bank-accounts/:id', async (req, res) => {
+    try {
+      const { id } = req.params;
+      const success = await storage.deleteBankAccount(id);
+      
+      if (!success) {
+        return res.status(404).json({ error: 'Bank account not found' });
+      }
+      
+      res.json({ message: 'Bank account deleted successfully' });
+    } catch (error) {
+      console.error('Error deleting bank account:', error);
+      res.status(500).json({ error: 'Failed to delete bank account' });
+    }
+  });
+
+  // Deposit request routes
+  app.post('/api/deposit-requests', async (req, res) => {
+    try {
+      const { userId, amount, bankAccountId, paymentMethod, transactionId, receipt } = req.body;
+      
+      if (!userId || !amount || !bankAccountId || !paymentMethod) {
+        return res.status(400).json({ error: 'Required fields are missing' });
+      }
+      
+      const depositRequest = await storage.createDepositRequest({
+        userId,
+        amount: parseFloat(amount),
+        bankAccountId,
+        paymentMethod,
+        transactionId,
+        receipt,
+        status: 'pending'
+      });
+      
+      res.status(201).json(depositRequest);
+    } catch (error) {
+      console.error('Error creating deposit request:', error);
+      res.status(500).json({ error: 'Failed to create deposit request' });
+    }
+  });
+
+  app.get('/api/admin/deposit-requests', async (req, res) => {
+    try {
+      const requests = await storage.getDepositRequests();
+      res.json(requests);
+    } catch (error) {
+      console.error('Error fetching deposit requests:', error);
+      res.status(500).json({ error: 'Failed to fetch deposit requests' });
+    }
+  });
+
+  app.put('/api/admin/deposit-requests/:id/approve', async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { adminNotes } = req.body;
+      
+      const result = await storage.approveDepositRequest(id, adminNotes);
+      if (!result) {
+        return res.status(404).json({ error: 'Deposit request not found' });
+      }
+      
+      res.json({ message: 'Deposit request approved successfully', result });
+    } catch (error) {
+      console.error('Error approving deposit request:', error);
+      res.status(500).json({ error: 'Failed to approve deposit request' });
+    }
+  });
+
+  app.put('/api/admin/deposit-requests/:id/reject', async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { adminNotes } = req.body;
+      
+      const result = await storage.rejectDepositRequest(id, adminNotes);
+      if (!result) {
+        return res.status(404).json({ error: 'Deposit request not found' });
+      }
+      
+      res.json({ message: 'Deposit request rejected', result });
+    } catch (error) {
+      console.error('Error rejecting deposit request:', error);
+      res.status(500).json({ error: 'Failed to reject deposit request' });
+    }
+  });
+
+  app.get('/api/users/:userId/deposit-requests', async (req, res) => {
+    try {
+      const { userId } = req.params;
+      const requests = await storage.getUserDepositRequests(userId);
+      res.json(requests);
+    } catch (error) {
+      console.error('Error fetching user deposit requests:', error);
+      res.status(500).json({ error: 'Failed to fetch deposit requests' });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

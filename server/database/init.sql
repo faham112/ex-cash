@@ -70,7 +70,7 @@ CREATE TABLE IF NOT EXISTS public.transactions (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Create referrals table
+-- Create referrals table for multi-level referral system
 CREATE TABLE IF NOT EXISTS public.referrals (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     referrer_id UUID NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
@@ -79,6 +79,42 @@ CREATE TABLE IF NOT EXISTS public.referrals (
     total_earned DECIMAL(15, 2) DEFAULT 0.00,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     UNIQUE(referrer_id, referred_id)
+);
+
+-- Create newsletter subscriptions table
+CREATE TABLE IF NOT EXISTS public.newsletters (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    email TEXT NOT NULL UNIQUE,
+    status TEXT DEFAULT 'active' CHECK (status IN ('active', 'unsubscribed')),
+    subscribed_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    unsubscribed_at TIMESTAMP WITH TIME ZONE
+);
+
+-- Create bank accounts table
+CREATE TABLE IF NOT EXISTS public.bank_accounts (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    bank_name TEXT NOT NULL,
+    account_holder TEXT NOT NULL,
+    account_number TEXT NOT NULL,
+    status TEXT DEFAULT 'active' CHECK (status IN ('active', 'inactive')),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Create deposit requests table
+CREATE TABLE IF NOT EXISTS public.deposit_requests (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
+    bank_account_id UUID NOT NULL REFERENCES public.bank_accounts(id) ON DELETE CASCADE,
+    amount DECIMAL(15, 2) NOT NULL,
+    payment_method TEXT NOT NULL,
+    transaction_id TEXT,
+    receipt TEXT,
+    status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'approved', 'rejected')),
+    admin_notes TEXT,
+    processed_at TIMESTAMP WITH TIME ZONE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
 -- Insert default investment plans

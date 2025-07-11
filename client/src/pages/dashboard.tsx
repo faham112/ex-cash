@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
 import { useAuth } from "@/components/Auth/AuthProvider";
@@ -40,6 +39,11 @@ export default function Dashboard() {
     { id: 3, type: 'profit', amount: 250, date: '2024-01-08', status: 'completed' },
     { id: 4, type: 'withdrawal', amount: -2000, date: '2024-01-07', status: 'pending' }
   ]);
+
+  const [userDepositRequests, setUserDepositRequests] = useState([]);
+  const [bankAccounts, setBankAccounts] = useState([]);
+  const [selectedBankAccount, setSelectedBankAccount] = useState('');
+  const [transactionId, setTransactionId] = useState('');
 
   useEffect(() => {
     if (!loading && !user) {
@@ -166,7 +170,7 @@ export default function Dashboard() {
             </Card>
           </div>
         );
-      
+
       case 'wallet':
         return (
           <div className="space-y-4">
@@ -206,7 +210,7 @@ export default function Dashboard() {
             </Card>
           </div>
         );
-      
+
       case 'profile':
         return (
           <div className="space-y-4">
@@ -238,7 +242,7 @@ export default function Dashboard() {
             </Card>
           </div>
         );
-      
+
       default:
         return (
           <>
@@ -435,7 +439,7 @@ export default function Dashboard() {
               <span className="text-blue-400">RO</span>
             </span>
           </div>
-          
+
           <div className="flex items-center gap-2">
             <Button
               variant="ghost"
@@ -446,7 +450,7 @@ export default function Dashboard() {
             >
               {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
             </Button>
-            
+
             <Button onClick={handleSignOut} variant="outline" size="sm" className="border-gray-600 text-white hover:bg-gray-700">
               <LogOut className="h-4 w-4" />
             </Button>
@@ -460,42 +464,95 @@ export default function Dashboard() {
 
       {/* Deposit Dialog */}
       <Dialog open={isDepositDialogOpen} onOpenChange={setIsDepositDialogOpen}>
-        <DialogContent className="bg-gray-800 border-gray-700">
+        <DialogContent className="bg-gray-800 border-gray-700 max-w-2xl">
           <DialogHeader>
             <DialogTitle className="text-white">Deposit Money</DialogTitle>
           </DialogHeader>
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="amount" className="text-gray-300">Amount (PKR)</Label>
-              <Input
-                id="amount"
-                type="number"
-                placeholder="Enter amount (minimum PKR 100)"
-                value={depositAmount}
-                onChange={(e) => setDepositAmount(e.target.value)}
-                className="bg-gray-700/50 border-gray-600 text-white placeholder:text-gray-400"
-              />
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="amount" className="text-gray-300">Amount (PKR)</Label>
+                <Input
+                  id="amount"
+                  type="number"
+                  placeholder="Enter amount (minimum PKR 100)"
+                  value={depositAmount}
+                  onChange={(e) => setDepositAmount(e.target.value)}
+                  className="bg-gray-700/50 border-gray-600 text-white placeholder:text-gray-400"
+                />
+              </div>
+              <div>
+                <Label htmlFor="payment-method" className="text-gray-300">Payment Method</Label>
+                <Select value={paymentMethod} onValueChange={setPaymentMethod}>
+                  <SelectTrigger className="bg-gray-700/50 border-gray-600 text-white">
+                    <SelectValue placeholder="Select payment method" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-gray-800 border-gray-700">
+                    <SelectItem value="bank-transfer" className="text-white focus:bg-gray-700">Bank Transfer</SelectItem>
+                    <SelectItem value="easypaisa" className="text-white focus:bg-gray-700">EasyPaisa</SelectItem>
+                    <SelectItem value="jazzcash" className="text-white focus:bg-gray-700">JazzCash</SelectItem>
+                    <SelectItem value="cash" className="text-white focus:bg-gray-700">Cash Deposit</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
+
             <div>
-              <Label htmlFor="payment-method" className="text-gray-300">Payment Method</Label>
-              <Select value={paymentMethod} onValueChange={setPaymentMethod}>
+              <Label htmlFor="bank-account" className="text-gray-300">Select Bank Account for Deposit</Label>
+              <Select value={selectedBankAccount} onValueChange={setSelectedBankAccount}>
                 <SelectTrigger className="bg-gray-700/50 border-gray-600 text-white">
-                  <SelectValue placeholder="Select payment method" />
+                  <SelectValue placeholder="Select bank account" />
                 </SelectTrigger>
                 <SelectContent className="bg-gray-800 border-gray-700">
-                  <SelectItem value="bank-transfer" className="text-white focus:bg-gray-700">Bank Transfer</SelectItem>
-                  <SelectItem value="easypaisa" className="text-white focus:bg-gray-700">EasyPaisa</SelectItem>
-                  <SelectItem value="jazzcash" className="text-white focus:bg-gray-700">JazzCash</SelectItem>
-                  <SelectItem value="credit-card" className="text-white focus:bg-gray-700">Credit Card</SelectItem>
+                  {bankAccounts.map((account) => (
+                    <SelectItem key={account.id} value={account.id} className="text-white focus:bg-gray-700">
+                      {account.bank_name} - {account.account_holder} ({account.account_number})
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
-            <div className="flex gap-2">
-              <Button onClick={handleDeposit} className="flex-1 bg-blue-600 hover:bg-blue-700">
-                Deposit
-              </Button>
-              <Button variant="outline" onClick={() => setIsDepositDialogOpen(false)} className="flex-1 border-gray-600 text-white hover:bg-gray-700">
+
+            {selectedBankAccount && (
+              <div className="bg-gray-700/30 p-4 rounded-lg">
+                <h4 className="text-white font-medium mb-2">Deposit Instructions</h4>
+                {(() => {
+                  const selectedAccount = bankAccounts.find(acc => acc.id === selectedBankAccount);
+                  return selectedAccount ? (
+                    <div className="space-y-2 text-gray-300">
+                      <p><strong>Bank Name:</strong> {selectedAccount.bank_name}</p>
+                      <p><strong>Account Holder:</strong> {selectedAccount.account_holder}</p>
+                      <p><strong>Account Number:</strong> {selectedAccount.account_number}</p>
+                      <div className="mt-3 p-3 bg-blue-900/30 rounded border border-blue-700">
+                        <p className="text-blue-200 text-sm">
+                          Please transfer the exact amount to the above account and enter your transaction ID below. 
+                          Your deposit will be processed after admin verification.
+                        </p>
+                      </div>
+                    </div>
+                  ) : null;
+                })()}
+              </div>
+            )}
+
+            <div>
+              <Label htmlFor="transaction-id" className="text-gray-300">Transaction ID (Optional)</Label>
+              <Input
+                id="transaction-id"
+                type="text"
+                placeholder="Enter transaction reference ID"
+                value={transactionId}
+                onChange={(e) => setTransactionId(e.target.value)}
+                className="bg-gray-700/50 border-gray-600 text-white placeholder:text-gray-400"
+              />
+            </div>
+
+            <div className="flex justify-end space-x-2">
+              <Button variant="outline" onClick={() => setIsDepositDialogOpen(false)} className="border-gray-600 text-gray-300 hover:bg-gray-700">
                 Cancel
+              </Button>
+              <Button onClick={handleDeposit} className="bg-green-600 hover:bg-green-700">
+                Submit Request
               </Button>
             </div>
           </div>
@@ -512,7 +569,7 @@ export default function Dashboard() {
             <Home size={24} />
             <span className="text-xs">Home</span>
           </button>
-          
+
           <button 
             onClick={() => setCurrentTab('activity')}
             className={`flex flex-col items-center p-2 ${currentTab === 'activity' ? 'text-blue-400' : 'text-gray-400'}`}
@@ -520,7 +577,7 @@ export default function Dashboard() {
             <Activity size={24} />
             <span className="text-xs">Activity</span>
           </button>
-          
+
           <button 
             onClick={() => setCurrentTab('wallet')}
             className={`flex flex-col items-center p-2 ${currentTab === 'wallet' ? 'text-blue-400' : 'text-gray-400'}`}
@@ -528,7 +585,7 @@ export default function Dashboard() {
             <Wallet size={24} />
             <span className="text-xs">Wallet</span>
           </button>
-          
+
           <button 
             onClick={() => setCurrentTab('profile')}
             className={`flex flex-col items-center p-2 ${currentTab === 'profile' ? 'text-blue-400' : 'text-gray-400'}`}
@@ -536,7 +593,7 @@ export default function Dashboard() {
             <User size={24} />
             <span className="text-xs">Profile</span>
           </button>
-          
+
           <Sheet>
             <SheetTrigger asChild>
               <button className="flex flex-col items-center p-2 text-gray-400">
