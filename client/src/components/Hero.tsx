@@ -8,8 +8,27 @@ import {
   ArrowRight, 
   Info 
 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase";
 
 export default function Hero() {
+  const [userCount, setUserCount] = useState(0);
+
+  useEffect(() => {
+    const fetchUserCount = async () => {
+      const { count, error } = await supabase
+        .from('users')
+        .select('*', { count: 'exact', head: true });
+
+      if (error) {
+        console.error('Error fetching user count:', error);
+      } else {
+        setUserCount(count || 0);
+      }
+    };
+
+    fetchUserCount();
+  }, []);
   return (
     <section className="py-16 md:py-24 relative gradient-bg">
       <div className="container mx-auto px-4 flex flex-col lg:flex-row items-center">
@@ -73,7 +92,7 @@ export default function Hero() {
                 <p className="text-muted-foreground">Total Investments</p>
               </div>
               <div className="text-center">
-                <h3 className="text-primary text-3xl md:text-4xl font-bold mb-2">50K+</h3>
+                <h3 className="text-primary text-3xl md:text-4xl font-bold mb-2">{userCount.toLocaleString()}+</h3>
                 <p className="text-muted-foreground">Active Investors</p>
               </div>
               <div className="text-center">

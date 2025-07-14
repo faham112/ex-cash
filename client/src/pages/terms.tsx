@@ -15,7 +15,7 @@ export default function Terms() {
             <p>By accessing and using InvestRO's services, you agree to be bound by these Terms of Service.</p>
 
             <h2>2. Investment Risks</h2>
-            <p>All investments carry risks. Past performance is not indicative of future results. Users should carefully consider their investment objectives.</p>
+            <p>All investments carry risks. Users should carefully consider their investment objectives.</p>
 
             <h2>3. Account Registration</h2>
             <p>Users must provide accurate and complete information when creating an account. You are responsible for maintaining the confidentiality of your account.</p>

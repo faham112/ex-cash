@@ -147,6 +147,7 @@ ALTER TABLE public.plans ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.investments ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.transactions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.referrals ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.newsletters ENABLE ROW LEVEL SECURITY; -- Enable RLS for newsletters
 
 -- Create RLS policies
 -- Users can only see their own data
@@ -178,6 +179,10 @@ CREATE POLICY "Users can create own transactions" ON public.transactions
 CREATE POLICY "Users can view own referrals" ON public.referrals
     FOR SELECT USING (referrer_id IN (SELECT id FROM public.users WHERE auth_id = auth.uid()) 
                      OR referred_id IN (SELECT id FROM public.users WHERE auth_id = auth.uid()));
+
+-- Newsletter policies
+CREATE POLICY "Allow anonymous subscribe to newsletter" ON public.newsletters
+    FOR INSERT WITH CHECK (TRUE);
 
 -- Create functions for automated tasks
 CREATE OR REPLACE FUNCTION public.generate_referral_code() RETURNS TEXT AS $$

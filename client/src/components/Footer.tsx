@@ -12,6 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function Footer() {
   const [email, setEmail] = useState("");
@@ -147,41 +148,50 @@ export default function Footer() {
               </li>
             </ul>
           </div>
-          
-          <div>
-            <h3 className="text-lg font-semibold mb-4">Newsletter</h3>
-            <p className="text-muted-foreground mb-4 text-sm">
-              Stay updated with the latest investment opportunities and platform news.
-            </p>
-            <form onSubmit={handleNewsletterSubmit} className="space-y-3">
-              <div className="flex flex-col space-y-2">
-                <Input
-                  type="email"
-                  placeholder="Enter your email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="bg-background text-foreground"
-                  disabled={isSubscribing}
-                />
-                <Button 
-                  type="submit" 
-                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
-                  disabled={isSubscribing}
-                >
-                  {isSubscribing ? "Subscribing..." : "Subscribe"}
-                </Button>
-              </div>
-            </form>
-            <p className="text-xs text-muted-foreground mt-2">
-              We respect your privacy. Unsubscribe at any time.
-            </p>
-          </div>
+        </div>
+        
+        <div className="mt-8">
+          <Card className="bg-background/50 border-none">
+            <CardHeader>
+              <CardTitle>Newsletter</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground mb-4 text-sm">
+                Stay updated with the latest investment opportunities and platform news.
+              </p>
+              <form onSubmit={handleNewsletterSubmit}>
+                <div className="grid grid-cols-4 gap-2">
+                  <div className="col-span-3">
+                    <Input
+                      type="email"
+                      placeholder="Enter your email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="bg-background text-foreground h-full"
+                      disabled={isSubscribing}
+                    />
+                  </div>
+                  <div className="col-span-1">
+                    <Button 
+                      type="submit" 
+                      className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
+                      disabled={isSubscribing}
+                    >
+                      {isSubscribing ? "Subscribing..." : "Subscribe"}
+                    </Button>
+                  </div>
+                </div>
+              </form>
+              <p className="text-xs text-muted-foreground mt-2">
+                We respect your privacy. Unsubscribe at any time.
+              </p>
+            </CardContent>
+          </Card>
         </div>
         
         <div className="border-t border-border pt-6 text-center text-muted-foreground text-sm">
           <p>&copy; {new Date().getFullYear()} InvestRO. All rights reserved.</p>
           <p className="mt-2">
-            <span className="text-xs">*Disclaimer: Investments involve risk. Past performance is not indicative of future results.</span>
           </p>
         </div>
       </div>

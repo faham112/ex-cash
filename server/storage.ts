@@ -8,7 +8,9 @@ import {
   type Newsletter,
   type InsertNewsletter,
   type PlatformStats,
-  type ReturnCalculation
+  type ReturnCalculation,
+  type InsertBankAccount,
+  type InsertDepositRequest
 } from "@shared/schema";
 import { supabase } from "./supabase";
 
@@ -47,6 +49,22 @@ export interface IStorage {
   subscribeToNewsletter(email: string): Promise<Newsletter>;
   unsubscribeFromNewsletter(email: string): Promise<void>;
   getNewsletterSubscriptions(): Promise<Newsletter[]>;
+
+  // Statistics
+  getStats(): Promise<PlatformStats>;
+  getUserStats(userId: string): Promise<any>;
+  getUserCount(): Promise<number>;
+
+  // Admin operations
+  getBankAccounts(): Promise<any[]>;
+  createBankAccount(account: InsertBankAccount): Promise<any>;
+  updateBankAccount(id: string, updates: Partial<any>): Promise<any | undefined>;
+  deleteBankAccount(id: string): Promise<boolean>;
+  getDepositRequests(): Promise<any[]>;
+  createDepositRequest(request: InsertDepositRequest): Promise<any>;
+  approveDepositRequest(id: string, adminNotes: string): Promise<any | undefined>;
+  rejectDepositRequest(id: string, adminNotes: string): Promise<any | undefined>;
+  getUserDepositRequests(userId: string): Promise<any[]>;
 }
 
 export class SupabaseStorage implements IStorage {
@@ -96,7 +114,7 @@ export class SupabaseStorage implements IStorage {
     return data as User;
   }
 
-  async createUser(insertUser: InsertUser): Promise<User> {
+  async createUser(insertUser: InsertUser & { auth_id: string, role?: string }): Promise<User> {
     const { data, error } = await supabase
       .from('users')
       .insert([insertUser])
@@ -435,6 +453,171 @@ export class SupabaseStorage implements IStorage {
     }
 
     return data as Newsletter[];
+  }
+
+  // Admin operations
+  async getBankAccounts(): Promise<any[]> {
+    const { data, error } = await supabase
+      .from('bank_accounts')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching bank accounts:', error);
+      return [];
+    }
+
+    return data;
+  }
+
+  async getDepositRequests(): Promise<any[]> {
+    const { data, error } = await supabase
+      .from('transactions')
+      .select(`
+        *,
+        user:users (
+          username,
+          email
+        )
+      `)
+      .eq('type', 'deposit')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching deposit requests:', error);
+      return [];
+    }
+
+    return data;
+  }
+
+  async getUserCount(): Promise<number> {
+    const { count, error } = await supabase
+      .from('users')
+      .select('*', { count: 'exact' })
+      .eq('status', 'active');
+
+    if (error) {
+      console.error('Error fetching user count:', error);
+      return 0;
+    }
+
+    return count || 0;
+  }
+
+  async createBankAccount(account: InsertBankAccount): Promise<any> {
+    const { data, error } = await supabase
+      .from('bank_accounts')
+      .insert([account])
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error creating bank account:', error);
+      throw new Error('Failed to create bank account');
+    }
+
+    return data;
+  }
+
+  async updateBankAccount(id: string, updates: Partial<any>): Promise<any | undefined> {
+    const { data, error } = await supabase
+      .from('bank_accounts')
+      .update(updates)
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error updating bank account:', error);
+      return undefined;
+    }
+
+    return data;
+  }
+
+  async deleteBankAccount(id: string): Promise<boolean> {
+    const { error } = await supabase
+      .from('bank_accounts')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      console.error('Error deleting bank account:', error);
+      return false;
+    }
+
+    return true;
+  }
+
+  async createDepositRequest(request: InsertDepositRequest): Promise<any> {
+    const { data, error } = await supabase
+      .from('transactions')
+      .insert([{ ...request, type: 'deposit', status: 'pending' }])
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error creating deposit request:', error);
+      throw new Error('Failed to create deposit request');
+    }
+
+    return data;
+  }
+
+  async approveDepositRequest(id: string, adminNotes: string): Promise<any | undefined> {
+    const { data, error } = await supabase
+      .from('transactions')
+      .update({ status: 'approved', admin_notes: adminNotes })
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error approving deposit request:', error);
+      return undefined;
+    }
+
+    return data;
+  }
+
+  async rejectDepositRequest(id: string, adminNotes: string): Promise<any | undefined> {
+    const { data, error } = await supabase
+      .from('transactions')
+      .update({ status: 'rejected', admin_notes: adminNotes })
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error rejecting deposit request:', error);
+      return undefined;
+    }
+
+    return data;
+  }
+
+  async getUserDepositRequests(userId: string): Promise<any[]> {
+    const { data, error } = await supabase
+      .from('transactions')
+      .select(`
+        *,
+        bank_account:bank_accounts (
+          bank_name,
+          account_holder,
+          account_number
+        )
+      `)
+      .eq('user_id', userId)
+      .eq('type', 'deposit')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching user deposit requests:', error);
+      return [];
+    }
+
+    return data;
   }
 }
 

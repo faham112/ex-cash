@@ -79,6 +79,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get('/api/users/count', async (req, res) => {
+    try {
+      const count = await storage.getUserCount();
+      res.json({ count });
+    } catch (error) {
+      console.error('Error fetching user count:', error);
+      res.status(500).json({ error: 'Failed to fetch user count' });
+    }
+  });
+
   // Investment routes
   app.post('/api/investments', async (req, res) => {
     try {
@@ -172,6 +182,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Admin login route
+  app.post('/api/auth/login', async (req, res) => {
+    try {
+      const { adminId, password } = req.body;
+
+      if (!adminId || !password) {
+        return res.status(400).json({ error: 'Admin ID and password are required' });
+      }
+
+      // For demonstration purposes, use hardcoded credentials
+      // In a real application, you would hash passwords and compare them securely
+      if (adminId === 'Faham112' && password === 'admin123') {
+        // In a real application, you would generate a JWT or session token here
+        res.json({ success: true, message: 'Login successful', admin: { adminId: 'Faham112' } });
+      } else {
+        res.status(401).json({ success: false, error: 'Invalid admin ID or password' });
+      }
+    } catch (error) {
+      console.error('Error during admin login:', error);
+      res.status(500).json({ success: false, error: 'Internal server error' });
+    }
+  });
+
   // Bank account management routes
   app.get('/api/admin/bank-accounts', async (req, res) => {
     try {
@@ -192,9 +225,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       const account = await storage.createBankAccount({
-        bankName,
-        accountHolder,
-        accountNumber,
+        bank_name: bankName,
+        account_holder: accountHolder,
+        account_number: accountNumber,
         status: status || 'active'
       });
       
@@ -248,13 +281,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       const depositRequest = await storage.createDepositRequest({
-        userId,
-        amount: parseFloat(amount),
-        bankAccountId,
-        paymentMethod,
-        transactionId,
-        receipt,
-        status: 'pending'
+        user_id: userId, // Use snake_case
+        amount: amount.toString(), // Convert to string
+        bank_account_id: bankAccountId, // Use snake_case
+        payment_method: paymentMethod, // Use snake_case
+        transaction_id: transactionId, // Use snake_case
+        receipt
       });
       
       res.status(201).json(depositRequest);

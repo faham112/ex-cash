@@ -24,10 +24,15 @@ import {
   Globe
 } from "lucide-react";
 import { useTheme } from "../contexts/ThemeContext";
+// import { useAuth } from "./Auth/AuthProvider"; // Removed useAuth import
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { theme, toggleTheme } = useTheme();
+  // const { user } = useAuth(); // Removed useAuth hook
+
+  // For now, we'll assume the dashboard link is always visible or handled by routing
+  const user = null; // Mock user to avoid errors, will be handled by routing
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
@@ -38,7 +43,7 @@ export default function Header() {
           <Link href="/" className="flex items-center gap-2">
             <span className="text-2xl font-bold">
               <span className="text-black dark:text-white">Invest</span>
-              <span className="text-blue-600">RO</span>
+              <span className="text-yellow-600">RO</span>
             </span>
           </Link>
         </div>
@@ -75,25 +80,26 @@ export default function Header() {
           
           {/* Desktop Login Button */}
           <Link href="/login" className="hidden md:block">
-            <Button variant="outline" size="sm" className="flex items-center gap-2">
+            <Button variant="outline" size="sm" className="flex items-center gap-2 border-slate-300 dark:border-slate-700">
               <User className="h-4 w-4" /> Login
             </Button>
           </Link>
           
           {/* Mobile Login Button */}
           <Link href="/login" className="md:hidden">
-            <Button variant="outline" size="sm" className="flex items-center gap-2">
+            <Button variant="outline" size="sm" className="flex items-center gap-2 border-slate-300 dark:border-slate-700">
               <User className="h-4 w-4" /> Login
             </Button>
           </Link>
           
           {/* Modern Hamburger Menu */}
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="sm" className="p-2">
-                <Menu className="h-5 w-5" />
-              </Button>
-            </SheetTrigger>
+          <div className="md:hidden">
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="sm" className="p-2">
+                  <Menu className="h-5 w-5" />
+                </Button>
+              </SheetTrigger>
             <SheetContent side="right" className="w-80">
               <SheetHeader>
                 <SheetTitle className="flex items-center gap-2 text-left">
@@ -140,6 +146,7 @@ export default function Header() {
                       <UserPlus className="h-5 w-5 text-green-600" />
                       <span className="font-medium">Sign Up</span>
                     </Link>
+                    {/* Removed conditional rendering based on user for simplicity on public header */}
                     <Link href="/dashboard" className="flex items-center gap-3 p-3 rounded-lg hover:bg-muted transition-colors">
                       <User className="h-5 w-5 text-purple-600" />
                       <span className="font-medium">Dashboard</span>
@@ -210,6 +217,7 @@ export default function Header() {
             </SheetContent>
           </Sheet>
         </div>
+      </div>
       </div>
 
     </header>

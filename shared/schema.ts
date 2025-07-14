@@ -15,6 +15,7 @@ export const users = pgTable("users", {
   referred_by: uuid("referred_by"),
   kyc_status: text("kyc_status").default("pending"),
   status: text("status").default("active"),
+  role: text("role").default("user"),
   created_at: timestamp("created_at").defaultNow(),
   updated_at: timestamp("updated_at").defaultNow()
 });

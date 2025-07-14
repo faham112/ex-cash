@@ -13,6 +13,13 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useToast } from "@/hooks/use-toast";
 import { useTheme } from "@/contexts/ThemeContext";
 
+interface BankAccount {
+  id: string;
+  bank_name: string;
+  account_holder: string;
+  account_number: string;
+}
+
 export default function Dashboard() {
   const [, setLocation] = useLocation();
   const [currentTab, setCurrentTab] = useState('home');
@@ -41,7 +48,7 @@ export default function Dashboard() {
   ]);
 
   const [userDepositRequests, setUserDepositRequests] = useState([]);
-  const [bankAccounts, setBankAccounts] = useState([]);
+  const [bankAccounts, setBankAccounts] = useState<BankAccount[]>([]);
   const [selectedBankAccount, setSelectedBankAccount] = useState('');
   const [transactionId, setTransactionId] = useState('');
 
@@ -603,6 +610,10 @@ export default function Dashboard() {
             </SheetTrigger>
             <SheetContent className="bg-gray-800 border-gray-700">
               <div className="flex flex-col gap-4 pt-10">
+                <a href="/dashboard" className="flex items-center gap-3 p-3 rounded-lg hover:bg-muted transition-colors">
+                  <User className="h-5 w-5 text-purple-600" />
+                  <span className="font-medium">Dashboard</span>
+                </a>
                 <Button variant="ghost" className="justify-start text-white hover:bg-gray-700" onClick={() => setCurrentTab('settings')}>
                   <Settings className="mr-2" size={18} />
                   Settings
